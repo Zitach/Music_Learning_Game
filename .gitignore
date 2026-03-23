@@ -4,3 +4,5 @@ coverage/
 .vite/
 *.log
 .superpowers/.sisyphus/
+
+docs/superpowers/plans/
