@@ -772,7 +772,7 @@ Max Concurrent: 4 (Waves 3-5)
   - Files: `src/lib/canvas/canvasTheme.ts`, `src/lib/canvas/__tests__/canvasTheme.test.ts`
   - Pre-commit: `npm run test:run`
 
-- [ ] 7. AppShell 重样式
+- [x] 7. AppShell 重样式
 
   **What to do**:
   - 更新 AppShell 的背景效果：移除暗色极光球效果，改为明亮的柔和渐变装饰球
@@ -842,7 +842,7 @@ Max Concurrent: 4 (Waves 3-5)
   - Files: `src/app/AppShell.tsx` (CSS classes only), `src/styles.css`, `src/stores/playerStore.ts`
   - Pre-commit: `npm run typecheck`
 
-- [ ] 8. HUD 组件重样式
+- [x] 8. HUD 组件重样式
 
   **What to do**:
   - 重样式化所有 HUD 组件为明亮紫色风格：
@@ -977,7 +977,7 @@ Max Concurrent: 4 (Waves 3-5)
   - Files: `src/components/Opening/*.tsx` (CSS), `src/styles/opening.css`
   - Pre-commit: `npm run typecheck`
 
-- [ ] 10. DemoAnimation 重样式
+- [x] 10. DemoAnimation 重样式
 
   **What to do**:
   - 将 DemoAnimation 的暗色全屏背景改为白底/浅紫背景

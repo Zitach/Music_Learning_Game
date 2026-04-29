@@ -27,6 +27,15 @@
       "agent": "Sisyphus-Junior",
       "category": "deep",
       "updated_at": "2026-04-29T05:35:41.915Z"
+    },
+    "todo:7": {
+      "task_key": "todo:7",
+      "task_label": "7",
+      "task_title": "AppShell 重样式",
+      "session_id": "ses_22841731fffe5VwYUmr71U1yoU",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-04-29T05:39:07.028Z"
     }
   }
 }

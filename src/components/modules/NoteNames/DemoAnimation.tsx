@@ -57,11 +57,11 @@ export function DemoAnimation({ onComplete, onSkip }: DemoAnimationProps) {
     // Scale context to match devicePixelRatio
     ctx.scale(dpr, dpr)
 
-    // Clear canvas with gradient background
+    // Clear canvas with light purple gradient background
     const gradient = ctx.createLinearGradient(0, 0, 0, height)
-    gradient.addColorStop(0, '#1a1a2e')
-    gradient.addColorStop(0.5, '#16213e')
-    gradient.addColorStop(1, '#0f0f23')
+    gradient.addColorStop(0, '#FFFFFF')
+    gradient.addColorStop(0.5, '#F5F3FF')
+    gradient.addColorStop(1, '#EDE9FE')
     ctx.fillStyle = gradient
     ctx.fillRect(0, 0, width, height)
 
@@ -147,7 +147,7 @@ export function DemoAnimation({ onComplete, onSkip }: DemoAnimationProps) {
         width: '100vw',
         height: '100vh',
         overflow: 'hidden',
-        backgroundColor: '#0f0f23',
+        backgroundColor: '#FFFFFF',
       }}
     >
       <canvas
@@ -185,8 +185,8 @@ export function DemoAnimation({ onComplete, onSkip }: DemoAnimationProps) {
               fontSize: '72px',
               fontFamily: "'Playfair Display', Georgia, serif",
               fontWeight: 700,
-              color: '#22c55e',
-              textShadow: '0 0 30px rgba(34, 197, 94, 0.5), 0 4px 20px rgba(0, 0, 0, 0.5)',
+              color: '#6B4EE6',
+              textShadow: '0 0 30px rgba(107, 78, 230, 0.3), 0 4px 20px rgba(0, 0, 0, 0.1)',
               letterSpacing: '0.05em',
             }}
           >
@@ -196,8 +196,8 @@ export function DemoAnimation({ onComplete, onSkip }: DemoAnimationProps) {
             style={{
               fontSize: '36px',
               fontFamily: "'Inter', -apple-system, sans-serif",
-              color: '#ffffff',
-              opacity: 0.8,
+              color: '#6B4EE6',
+              opacity: 0.7,
               fontWeight: 300,
             }}
           >
@@ -208,8 +208,8 @@ export function DemoAnimation({ onComplete, onSkip }: DemoAnimationProps) {
               fontSize: '72px',
               fontFamily: "'Playfair Display', Georgia, serif",
               fontWeight: 700,
-              color: '#ffffff',
-              textShadow: '0 0 30px rgba(255, 255, 255, 0.3), 0 4px 20px rgba(0, 0, 0, 0.5)',
+              color: '#6B4EE6',
+              textShadow: '0 0 30px rgba(107, 78, 230, 0.3), 0 4px 20px rgba(0, 0, 0, 0.1)',
               letterSpacing: '0.05em',
             }}
           >
@@ -227,7 +227,7 @@ export function DemoAnimation({ onComplete, onSkip }: DemoAnimationProps) {
           transform: 'translate(-50%, -50%)',
           width: floatingText ? '400px' : '100px',
           height: floatingText ? '200px' : '100px',
-          background: 'radial-gradient(ellipse, rgba(34, 197, 94, 0.15) 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse, rgba(107, 78, 230, 0.12) 0%, transparent 70%)',
           transition: 'all 1s ease-out',
           pointerEvents: 'none',
         }}
@@ -241,10 +241,10 @@ export function DemoAnimation({ onComplete, onSkip }: DemoAnimationProps) {
           top: '24px',
           right: '24px',
           padding: '10px 20px',
-          background: 'rgba(255, 255, 255, 0.08)',
-          border: '1px solid rgba(255, 255, 255, 0.15)',
+          background: 'rgba(107, 78, 230, 0.08)',
+          border: '1px solid rgba(107, 78, 230, 0.2)',
           borderRadius: '8px',
-          color: 'rgba(255, 255, 255, 0.6)',
+          color: 'rgba(107, 78, 230, 0.7)',
           fontFamily: "'Inter', -apple-system, sans-serif",
           fontSize: '14px',
           cursor: 'pointer',
@@ -252,12 +252,12 @@ export function DemoAnimation({ onComplete, onSkip }: DemoAnimationProps) {
           zIndex: 10,
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.14)'
-          e.currentTarget.style.color = 'rgba(255, 255, 255, 0.9)'
+          e.currentTarget.style.background = 'rgba(107, 78, 230, 0.14)'
+          e.currentTarget.style.color = 'rgba(107, 78, 230, 0.9)'
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'
-          e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)'
+          e.currentTarget.style.background = 'rgba(107, 78, 230, 0.08)'
+          e.currentTarget.style.color = 'rgba(107, 78, 230, 0.7)'
         }}
       >
         跳过 →
@@ -272,12 +272,12 @@ export function DemoAnimation({ onComplete, onSkip }: DemoAnimationProps) {
             left: '50%',
             transform: 'translateX(-50%)',
             padding: '12px 24px',
-            background: 'rgba(34, 197, 94, 0.2)',
-            border: '1px solid rgba(34, 197, 94, 0.4)',
+            background: 'rgba(107, 78, 230, 0.12)',
+            border: '1px solid rgba(107, 78, 230, 0.3)',
             borderRadius: '8px',
             fontFamily: "'Inter', -apple-system, sans-serif",
             fontSize: '14px',
-            color: '#22c55e',
+            color: '#6B4EE6',
             letterSpacing: '0.1em',
             textTransform: 'uppercase',
             animation: 'fadeIn 0.3s ease-out',

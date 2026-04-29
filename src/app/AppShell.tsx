@@ -79,14 +79,14 @@ export function AppShell({
               top: 12,
               right: 12,
               zIndex: 100,
-              background: 'none',
-              border: '1px solid rgba(255,255,255,0.12)',
+              background: 'var(--panel)',
+              border: '1px solid var(--line)',
               borderRadius: 8,
               padding: '6px 12px',
               color: 'var(--text)',
               cursor: 'pointer',
               fontSize: 13,
-              opacity: 0.5,
+              opacity: 0.7,
             }}
             title="切换主题"
           >
