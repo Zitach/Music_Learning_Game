@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { Piano } from '../../../lib/canvas/Piano'
 import { audioEngine } from '../../../lib/audio/Engine'
+import { getCanvasTheme } from '../../../lib/canvas/canvasTheme'
 
 interface DemoAnimationProps {
   onComplete: () => void
@@ -42,6 +43,7 @@ export function DemoAnimation({ onComplete, onSkip }: DemoAnimationProps) {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    const theme = getCanvasTheme('light')
     const dpr = window.devicePixelRatio || 1
     const width = window.innerWidth
     const height = window.innerHeight
@@ -59,9 +61,9 @@ export function DemoAnimation({ onComplete, onSkip }: DemoAnimationProps) {
 
     // Clear canvas with light purple gradient background
     const gradient = ctx.createLinearGradient(0, 0, 0, height)
-    gradient.addColorStop(0, '#FFFFFF')
-    gradient.addColorStop(0.5, '#F5F3FF')
-    gradient.addColorStop(1, '#EDE9FE')
+    gradient.addColorStop(0, theme.bgGradient[0])
+    gradient.addColorStop(0.5, theme.bgGradient[1])
+    gradient.addColorStop(1, theme.bgGradient[1])
     ctx.fillStyle = gradient
     ctx.fillRect(0, 0, width, height)
 
@@ -75,7 +77,7 @@ export function DemoAnimation({ onComplete, onSkip }: DemoAnimationProps) {
     }
 
     // Draw piano
-    piano.draw(highlightedKey, '#22c55e')
+    piano.draw(highlightedKey, theme.pianoHighlight)
 
     // Continue animation loop
     if (phase !== 'complete') {
@@ -147,7 +149,7 @@ export function DemoAnimation({ onComplete, onSkip }: DemoAnimationProps) {
         width: '100vw',
         height: '100vh',
         overflow: 'hidden',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'var(--bg-0)',
       }}
     >
       <canvas
@@ -185,7 +187,7 @@ export function DemoAnimation({ onComplete, onSkip }: DemoAnimationProps) {
               fontSize: '72px',
               fontFamily: "'Playfair Display', Georgia, serif",
               fontWeight: 700,
-              color: '#6B4EE6',
+              color: 'var(--primary)',
               textShadow: '0 0 30px rgba(107, 78, 230, 0.3), 0 4px 20px rgba(0, 0, 0, 0.1)',
               letterSpacing: '0.05em',
             }}
@@ -196,7 +198,7 @@ export function DemoAnimation({ onComplete, onSkip }: DemoAnimationProps) {
             style={{
               fontSize: '36px',
               fontFamily: "'Inter', -apple-system, sans-serif",
-              color: '#6B4EE6',
+              color: 'var(--primary)',
               opacity: 0.7,
               fontWeight: 300,
             }}
@@ -208,7 +210,7 @@ export function DemoAnimation({ onComplete, onSkip }: DemoAnimationProps) {
               fontSize: '72px',
               fontFamily: "'Playfair Display', Georgia, serif",
               fontWeight: 700,
-              color: '#6B4EE6',
+              color: 'var(--primary)',
               textShadow: '0 0 30px rgba(107, 78, 230, 0.3), 0 4px 20px rgba(0, 0, 0, 0.1)',
               letterSpacing: '0.05em',
             }}
@@ -277,7 +279,7 @@ export function DemoAnimation({ onComplete, onSkip }: DemoAnimationProps) {
             borderRadius: '8px',
             fontFamily: "'Inter', -apple-system, sans-serif",
             fontSize: '14px',
-            color: '#6B4EE6',
+            color: 'var(--primary)',
             letterSpacing: '0.1em',
             textTransform: 'uppercase',
             animation: 'fadeIn 0.3s ease-out',

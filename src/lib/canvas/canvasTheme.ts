@@ -59,9 +59,9 @@ export function getCanvasTheme(theme: 'light' | 'dark'): CanvasTheme {
       warning: '#F59E0B',
       text: '#111827',
       textMuted: '#6B7280',
-      particleSuccess: ['#7ce0c3', '#aef8e1', '#f8d27a', '#ffffff'],
-      particleError: ['#ff8f8f', '#ff6b6b', '#ffaaaa'],
-      particleLevelUp: ['#f8d27a', '#7ce0c3', '#8e7dff', '#ff8f8f', '#ffffff', '#aef8e1'],
+      particleSuccess: ['#F59E0B', '#FCD34D', '#FBBF24', '#FFFFFF'],
+      particleError: ['#EF4444', '#F87171', '#FCA5A5'],
+      particleLevelUp: ['#6B4EE6', '#8B5CF6', '#A78BFA', '#F59E0B', '#FFFFFF', '#C4B5FD'],
     }
   }
 
@@ -92,8 +92,8 @@ export function getCanvasTheme(theme: 'light' | 'dark'): CanvasTheme {
     warning: '#FBBF24',
     text: '#F9FAFB',
     textMuted: '#9CA3AF',
-    particleSuccess: ['#7ce0c3', '#aef8e1', '#f8d27a', '#ffffff'],
-    particleError: ['#ff8f8f', '#ff6b6b', '#ffaaaa'],
-    particleLevelUp: ['#f8d27a', '#7ce0c3', '#8e7dff', '#ff8f8f', '#ffffff', '#aef8e1'],
+      particleSuccess: ['#F59E0B', '#FCD34D', '#FBBF24', '#FFFFFF'],
+      particleError: ['#EF4444', '#F87171', '#FCA5A5'],
+      particleLevelUp: ['#6B4EE6', '#8B5CF6', '#A78BFA', '#F59E0B', '#FFFFFF', '#C4B5FD'],
   }
 }

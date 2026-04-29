@@ -3,6 +3,7 @@ import { drawTrebleClef } from '../../../lib/music/clef'
 import { drawLedgerLines } from '../../../lib/music/notation'
 import { useGameStore } from '../../../lib/stores/gameStore'
 import { audioEngine } from '../../../lib/audio/Engine'
+import { getCanvasTheme } from '../../../lib/canvas/canvasTheme'
 
 type ScaleType = 'major' | 'naturalMinor' | 'pentatonic'
 
@@ -59,8 +60,10 @@ export function ScalesPractice({ onComplete }: ScalesPracticeProps) {
     if (!node) return
     const ctx = node.getContext('2d')
     if (!ctx) return
+
+    const theme = getCanvasTheme('light')
     
-    ctx.fillStyle = '#ffffff'
+    ctx.fillStyle = theme.staffBackground
     ctx.fillRect(0, 0, node.width, node.height)
 
     const size = 40
@@ -71,7 +74,7 @@ export function ScalesPractice({ onComplete }: ScalesPracticeProps) {
     drawTrebleClef({ ctx, x: 30, y: staffY, size })
 
     // Draw staff lines
-    ctx.strokeStyle = '#1E1B4B'
+    ctx.strokeStyle = theme.staffLine
     ctx.lineWidth = 1
     for (let i = 0; i < 5; i++) {
       ctx.beginPath()
@@ -88,14 +91,14 @@ export function ScalesPractice({ onComplete }: ScalesPracticeProps) {
 
       // Highlight current note
       if (i === currentIndex) {
-        ctx.fillStyle = feedback === 'correct' ? '#10B981' : feedback === 'wrong' ? '#EF4444' : '#F59E0B'
+        ctx.fillStyle = feedback === 'correct' ? theme.success : feedback === 'wrong' ? theme.error : theme.warning
         ctx.beginPath()
         ctx.arc(noteX, noteY, 12, 0, Math.PI * 2)
         ctx.fill()
       }
 
       // Draw note head
-      ctx.fillStyle = '#1E1B4B'
+      ctx.fillStyle = theme.staffNote
       ctx.beginPath()
       ctx.ellipse(noteX, noteY, 6, 5, -0.3, 0, Math.PI * 2)
       ctx.fill()
@@ -104,7 +107,7 @@ export function ScalesPractice({ onComplete }: ScalesPracticeProps) {
       drawLedgerLines({ ctx, x: noteX, y: noteY, staffY, lineSpacing })
 
       // Draw note name below
-      ctx.fillStyle = 'rgba(30, 27, 75, 0.55)'
+      ctx.fillStyle = theme.textMuted
       ctx.font = '12px sans-serif'
       ctx.textAlign = 'center'
       ctx.fillText(note, noteX, staffY + 5 * lineSpacing + 15)

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback, useState } from 'react'
+import { getCanvasTheme } from '../../../lib/canvas/canvasTheme'
 
 export interface Note {
   number: number
@@ -224,6 +225,8 @@ function CanvasWithOffset({
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    const theme = getCanvasTheme('light')
+
     const dpr = window.devicePixelRatio || 1
 
     canvas.style.width = `${width}px`
@@ -241,7 +244,7 @@ function CanvasWithOffset({
     ctx.clearRect(0, 0, width, height)
 
     // Draw 5 horizontal staff lines
-    ctx.strokeStyle = 'rgba(30, 27, 75, 0.35)'
+    ctx.strokeStyle = theme.staffLine
     ctx.lineWidth = 1
 
     for (let i = 0; i < STAFF_LINE_COUNT; i++) {
@@ -255,7 +258,7 @@ function CanvasWithOffset({
     // Draw time signature
     if (timeSignature) {
       ctx.font = `bold 18px system-ui, sans-serif`
-      ctx.fillStyle = 'rgba(30, 27, 75, 0.55)'
+      ctx.fillStyle = theme.textMuted
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       ctx.fillText(timeSignature.top.toString(), STAVE_PADDING / 2, middleLineY - LINE_SPACING)
@@ -293,7 +296,7 @@ function CanvasWithOffset({
 
           ctx.beginPath()
           ctx.arc(dotX, dotY, DOT_RADIUS, 0, Math.PI * 2)
-          ctx.fillStyle = isCurrentNote ? '#1E1B4B' : 'rgba(30, 27, 75, 0.35)'
+          ctx.fillStyle = isCurrentNote ? theme.text : theme.textMuted
           ctx.fill()
         }
       }
@@ -306,7 +309,7 @@ function CanvasWithOffset({
 
           ctx.beginPath()
           ctx.arc(dotX, dotY, DOT_RADIUS, 0, Math.PI * 2)
-          ctx.fillStyle = isCurrentNote ? '#1E1B4B' : 'rgba(30, 27, 75, 0.35)'
+          ctx.fillStyle = isCurrentNote ? theme.text : theme.textMuted
           ctx.fill()
         }
       }
@@ -318,7 +321,7 @@ function CanvasWithOffset({
       // Highlight current note
       if (isCurrentNote) {
         const bgPadding = 4
-        ctx.fillStyle = '#F59E0B'
+        ctx.fillStyle = theme.warning
         ctx.beginPath()
         ctx.roundRect(
           noteX - NUMBER_FONT_SIZE / 2 - bgPadding,
@@ -328,9 +331,9 @@ function CanvasWithOffset({
           4
         )
         ctx.fill()
-        ctx.fillStyle = '#1E1B4B'
+        ctx.fillStyle = theme.text
       } else {
-        ctx.fillStyle = 'rgba(30, 27, 75, 0.35)'
+        ctx.fillStyle = theme.textMuted
       }
 
       ctx.fillText(note.number.toString(), noteX, noteY)

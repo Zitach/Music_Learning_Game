@@ -1606,7 +1606,7 @@ Max Concurrent: 4 (Waves 3-5)
   - Files: `src/components/Canvas/PianoCanvas.tsx`, `src/components/Canvas/StaffCanvas.tsx`, `src/components/Canvas/MetronomeCanvas.tsx`, `src/lib/canvas/Piano.ts`
   - Pre-commit: `npm run typecheck`
 
-- [ ] 20. 硬编码颜色全量清扫
+- [x] 20. 硬编码颜色全量清扫
 
   **What to do**:
   - 使用 `grep -r` 搜索所有 `src/` 下的硬编码颜色值：
@@ -1685,7 +1685,7 @@ Max Concurrent: 4 (Waves 3-5)
   - Files: FollowPractice.tsx, ScrollableStaff.tsx, TutorialOverlay.tsx, and others found by grep
   - Pre-commit: `npm run typecheck`
 
-- [ ] 21. 粒子效果 + 粒子预设颜色更新
+- [x] 21. 粒子效果 + 粒子预设颜色更新
 
   **What to do**:
   - 更新 `src/lib/effects/particlePresets.ts` 中的粒子颜色：
@@ -1747,7 +1747,7 @@ Max Concurrent: 4 (Waves 3-5)
   - Files: `src/lib/effects/particlePresets.ts`, `src/lib/effects/ParticleSystem.ts`, `src/components/Effects/ParticleCanvas.tsx`
   - Pre-commit: `npm run typecheck`
 
-- [ ] 22. 明暗主题切换验证 + 最终润色
+- [x] 22. 明暗主题切换验证 + 最终润色
 
   **What to do**:
   - 测试明暗主题切换在所有页面的效果

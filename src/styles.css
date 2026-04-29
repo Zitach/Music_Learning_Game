@@ -53,22 +53,6 @@
   --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.50);
 }
 
-:root[data-theme="light"] {
-  --bg-0: #f0f3f8;
-  --bg-1: #e8ecf4;
-  --bg-2: #dce0ea;
-  --panel: rgba(255, 255, 255, 0.78);
-  --panel-strong: rgba(255, 255, 255, 0.92);
-  --line: rgba(0, 0, 0, 0.08);
-  --text: #1a1a2e;
-  --muted: rgba(26, 26, 46, 0.6);
-  --gold: #b8860b;
-  --mint: #2d8a6e;
-  --violet: #5a4fcf;
-  --danger: #d63031;
-  --shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-}
-
 * {
   box-sizing: border-box;
 }
@@ -88,11 +72,13 @@ body {
     radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.05), transparent 25%),
     linear-gradient(145deg, var(--bg-0), var(--bg-1) 45%, var(--bg-2));
   color: var(--text);
+  transition: background 0.4s ease, color 0.3s ease;
 }
 
 button,
 input {
   font: inherit;
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .game-shell {
@@ -105,6 +91,7 @@ input {
     radial-gradient(circle at top, rgba(139, 92, 246, 0.06), transparent 26%),
     radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.05), transparent 30%),
     linear-gradient(160deg, var(--bg-0), var(--bg-1) 55%, var(--bg-2));
+  transition: background 0.4s ease;
 }
 
 .game-shell::before,
@@ -179,6 +166,7 @@ input {
   background: var(--panel);
   backdrop-filter: blur(18px);
   box-shadow: var(--shadow);
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .hud-chip {
@@ -193,6 +181,7 @@ input {
   background: var(--panel);
   backdrop-filter: blur(18px);
   box-shadow: var(--shadow);
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .hud-chip .level-badge {

@@ -1,4 +1,7 @@
 import type { EmitterConfig } from './ParticleSystem'
+import { getCanvasTheme } from '../canvas/canvasTheme'
+
+const theme = getCanvasTheme('light')
 
 type PresetName = 'correctBurst' | 'wrongShake' | 'comboRise' | 'levelUpCelebration' | 'skillComplete' | 'chapterUnlock'
 
@@ -9,7 +12,7 @@ export const PARTICLE_PRESETS: Record<PresetName, EmitterConfig> = {
     speed: 4,
     size: [4, 8],
     life: [400, 700],
-    colors: ['#7ce0c3', '#aef8e1', '#f8d27a', '#ffffff'],
+    colors: theme.particleSuccess,
     angleSpread: Math.PI * 0.6,
     angle: -Math.PI / 2,
   },
@@ -19,7 +22,7 @@ export const PARTICLE_PRESETS: Record<PresetName, EmitterConfig> = {
     speed: 3,
     size: [2, 5],
     life: [300, 500],
-    colors: ['#ff8f8f', '#ff6b6b', '#ffaaaa'],
+    colors: theme.particleError,
     angleSpread: Math.PI,
     angle: 0,
   },
@@ -29,7 +32,7 @@ export const PARTICLE_PRESETS: Record<PresetName, EmitterConfig> = {
     speed: 3,
     size: [2, 6],
     life: [500, 900],
-    colors: ['#f8d27a', '#ffeaa7', '#ffd700'],
+    colors: theme.particleSuccess,
     angleSpread: Math.PI * 0.4,
     angle: -Math.PI / 2,
   },
@@ -39,7 +42,7 @@ export const PARTICLE_PRESETS: Record<PresetName, EmitterConfig> = {
     speed: 8,
     size: [4, 10],
     life: [600, 1200],
-    colors: ['#f8d27a', '#7ce0c3', '#8e7dff', '#ff8f8f', '#ffffff', '#aef8e1'],
+    colors: theme.particleLevelUp,
     angleSpread: Math.PI * 2,
     angle: 0,
   },
@@ -49,7 +52,7 @@ export const PARTICLE_PRESETS: Record<PresetName, EmitterConfig> = {
     speed: 7,
     size: [3, 8],
     life: [800, 1500],
-    colors: ['#f8d27a', '#7ce0c3', '#8e7dff', '#ff8f8f', '#ffeaa7', '#aef8e1', '#ffd700', '#ffffff'],
+    colors: [...theme.particleLevelUp, ...theme.particleSuccess],
     angleSpread: Math.PI * 1.5,
     angle: -Math.PI / 2,
   },
@@ -59,7 +62,7 @@ export const PARTICLE_PRESETS: Record<PresetName, EmitterConfig> = {
     speed: 5,
     size: [3, 7],
     life: [700, 1400],
-    colors: ['#8e7dff', '#b8a9ff', '#f8d27a', '#e0d8ff', '#ffffff'],
+    colors: [...theme.particleLevelUp, '#F59E0B'],
     angleSpread: Math.PI,
     angle: -Math.PI / 2,
   },
