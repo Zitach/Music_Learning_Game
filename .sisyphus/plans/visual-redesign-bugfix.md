@@ -1286,7 +1286,7 @@ Max Concurrent: 4 (Waves 3-5)
   - Files: `src/components/Transitions/TransitionOverlay.tsx` (CSS), `src/styles.css`
   - Pre-commit: `npm run typecheck`
 
-- [ ] 15. LearnView + AssessView 视觉重样式
+- [x] 15. LearnView + AssessView 视觉重样式
 
   **What to do**:
   - **LearnView**: 课程内容面板白底 + 紫色强调，文本深色，代码/音符示例使用紫色背景块
@@ -1357,7 +1357,7 @@ Max Concurrent: 4 (Waves 3-5)
   - Files: `src/components/SkillPanel/LearnView.tsx` (CSS), `src/components/SkillPanel/AssessView.tsx` (CSS), `src/styles/lesson.css`
   - Pre-commit: `npm run typecheck`
 
-- [ ] 16. 练习变体重样式 (6 个 practiceVariants)
+- [x] 16. 练习变体重样式 (6 个 practiceVariants)
 
   **What to do**:
   - 重样式化 6 个练习变体组件的 CSS：
@@ -1424,7 +1424,7 @@ Max Concurrent: 4 (Waves 3-5)
   - Files: `src/components/SkillPanel/practiceVariants/*.tsx` (CSS)
   - Pre-commit: `npm run typecheck`
 
-- [ ] 17. 练习模块重样式 — Intervals + Chords + NoteNames
+- [x] 17. 练习模块重样式 — Intervals + Chords + NoteNames
 
   **What to do**:
   - 重样式化 3 个练习模块组件：
@@ -1481,7 +1481,7 @@ Max Concurrent: 4 (Waves 3-5)
   - Files: `src/components/modules/Intervals/IntervalsPractice.tsx` (CSS), `src/components/modules/Chords/ChordsPractice.tsx` (CSS)
   - Pre-commit: `npm run typecheck`
 
-- [ ] 18. 练习模块重样式 — Scales + Staff + Rhythm + Progressions
+- [x] 18. 练习模块重样式 — Scales + Staff + Rhythm + Progressions
 
   **What to do**:
   - 重样式化 4 个练习模块组件：
@@ -1543,7 +1543,7 @@ Max Concurrent: 4 (Waves 3-5)
   - Files: `src/components/modules/Scales/ScalesPractice.tsx` (CSS), `src/components/modules/Staff/StaffPractice.tsx` (CSS), `src/components/modules/Rhythm/FollowPractice.tsx` (CSS), `src/components/modules/Rhythm/ScrollableStaff.tsx` (CSS), `src/components/modules/Progressions/ProgressionsPractice.tsx` (CSS)
   - Pre-commit: `npm run typecheck`
 
-- [ ] 19. Canvas 组件更新 (PianoCanvas + StaffCanvas + MetronomeCanvas)
+- [x] 19. Canvas 组件更新 (PianoCanvas + StaffCanvas + MetronomeCanvas)
 
   **What to do**:
   - **PianoCanvas / Piano.ts**: 引入 `canvasTheme.ts`，更新钢琴容器背景色（浅色），键标签颜色（深色文字）— 钢琴键本身保持黑白

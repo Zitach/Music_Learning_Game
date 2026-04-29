@@ -1,4 +1,20 @@
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback, useState } from 'react'
+import { getCanvasTheme } from '../../lib/canvas/canvasTheme'
+
+function useCurrentTheme(): 'light' | 'dark' {
+  const [theme, setTheme] = useState<'light' | 'dark'>(() =>
+    document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
+  )
+  useEffect(() => {
+    const el = document.documentElement
+    const obs = new MutationObserver(() => {
+      setTheme(el.dataset.theme === 'dark' ? 'dark' : 'light')
+    })
+    obs.observe(el, { attributes: true, attributeFilter: ['data-theme'] })
+    return () => obs.disconnect()
+  }, [])
+  return theme
+}
 
 export interface MetronomeCanvasProps {
   bpm?: number
@@ -9,10 +25,6 @@ export interface MetronomeCanvasProps {
 const BEAT_COUNT = 4
 const BEAT_INDICATOR_SIZE = 20
 const BEAT_INDICATOR_GAP = 16
-const INACTIVE_COLOR = '#3a3a3a'
-const ACTIVE_COLOR = '#4ade80'
-const INACTIVE_BORDER = '#555555'
-const ACTIVE_BORDER = '#22c55e'
 
 export function MetronomeCanvas({
   bpm = 120,
@@ -23,6 +35,7 @@ export function MetronomeCanvas({
   const animationRef = useRef<number | null>(null)
   const lastBeatTimeRef = useRef<number>(0)
   const displayedBeatRef = useRef<number>(0)
+  const currentTheme = useCurrentTheme()
 
   const draw = useCallback(
     (timestamp: number) => {
@@ -32,6 +45,7 @@ export function MetronomeCanvas({
       const ctx = canvas.getContext('2d')
       if (!ctx) return
 
+      const theme = getCanvasTheme(currentTheme)
       const dpr = window.devicePixelRatio || 1
       const width = canvas.width / dpr
       const height = canvas.height / dpr
@@ -54,8 +68,10 @@ export function MetronomeCanvas({
         displayedBeatRef.current = currentBeat
       }
 
-      // Clear canvas
+      // Clear canvas and draw background
       ctx.clearRect(0, 0, width, height)
+      ctx.fillStyle = theme.bg
+      ctx.fillRect(0, 0, width, height)
 
       // Draw beat indicators
       for (let i = 0; i < BEAT_COUNT; i++) {
@@ -68,17 +84,17 @@ export function MetronomeCanvas({
         ctx.arc(x + BEAT_INDICATOR_SIZE / 2, centerY, BEAT_INDICATOR_SIZE / 2, 0, Math.PI * 2)
 
         // Fill color
-        ctx.fillStyle = isActive ? ACTIVE_COLOR : INACTIVE_COLOR
+        ctx.fillStyle = isActive ? theme.metronomeActive : theme.metronomeInactive
         ctx.fill()
 
         // Border
-        ctx.strokeStyle = isActive ? ACTIVE_BORDER : INACTIVE_BORDER
+        ctx.strokeStyle = isActive ? theme.metronomeActive : theme.textMuted
         ctx.lineWidth = isFirstBeat ? 3 : 2
         ctx.stroke()
 
         // Add glow effect for active beat
         if (isActive) {
-          ctx.shadowColor = ACTIVE_COLOR
+          ctx.shadowColor = theme.metronomeActive
           ctx.shadowBlur = 15
           ctx.beginPath()
           ctx.arc(x + BEAT_INDICATOR_SIZE / 2, centerY, BEAT_INDICATOR_SIZE / 2, 0, Math.PI * 2)
@@ -89,13 +105,13 @@ export function MetronomeCanvas({
 
       // Draw BPM text
       ctx.font = '14px system-ui, sans-serif'
-      ctx.fillStyle = '#888888'
+      ctx.fillStyle = theme.textMuted
       ctx.textAlign = 'center'
       ctx.fillText(`${bpm} BPM`, width / 2, centerY + BEAT_INDICATOR_SIZE + 20)
 
       animationRef.current = requestAnimationFrame(draw)
     },
-    [bpm, isPlaying, currentBeat]
+    [bpm, isPlaying, currentBeat, currentTheme]
   )
 
   useEffect(() => {

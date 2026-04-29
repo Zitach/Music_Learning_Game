@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useState, useRef } from 'react'
+import { useCallback, useEffect, useState, useRef } from 'react'
 import { drawTrebleClef, drawBassClef } from '../../../lib/music/clef'
 import { drawLedgerLines, drawAccidental } from '../../../lib/music/notation'
 import { useGameStore } from '../../../lib/stores/gameStore'
@@ -37,7 +37,7 @@ export function StaffPractice({ notes, onComplete }: StaffPracticeProps) {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    ctx.fillStyle = '#fff'
+    ctx.fillStyle = '#ffffff'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
     const size = 40
@@ -46,7 +46,7 @@ export function StaffPractice({ notes, onComplete }: StaffPracticeProps) {
 
     drawTrebleClef({ ctx, x: 30, y: staffY, size })
 
-    ctx.strokeStyle = '#000'
+    ctx.strokeStyle = '#1E1B4B'
     ctx.lineWidth = 1
     for (let index = 0; index < 5; index++) {
       ctx.beginPath()
@@ -64,7 +64,7 @@ export function StaffPractice({ notes, onComplete }: StaffPracticeProps) {
 
       drawLedgerLines({ ctx, x: noteX, y: noteY, staffY, lineSpacing })
 
-      ctx.fillStyle = '#000'
+      ctx.fillStyle = '#1E1B4B'
       ctx.beginPath()
       ctx.ellipse(noteX, noteY, 6, 5, -0.3, 0, Math.PI * 2)
       ctx.fill()
@@ -80,7 +80,7 @@ export function StaffPractice({ notes, onComplete }: StaffPracticeProps) {
         drawAccidental({ ctx, x: noteX - 15, y: noteY, type: 'flat', size })
       }
 
-      ctx.fillStyle = '#666'
+      ctx.fillStyle = 'rgba(30, 27, 75, 0.55)'
       ctx.font = '12px system-ui, sans-serif'
       ctx.textAlign = 'center'
       ctx.fillText(note.note, noteX, staffY - 10)

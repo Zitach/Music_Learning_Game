@@ -1,6 +1,22 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { Piano } from '../../lib/canvas/Piano'
 import { audioEngine } from '../../lib/audio/Engine'
+import { getCanvasTheme } from '../../lib/canvas/canvasTheme'
+
+function useCurrentTheme(): 'light' | 'dark' {
+  const [theme, setTheme] = useState<'light' | 'dark'>(() =>
+    document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
+  )
+  useEffect(() => {
+    const el = document.documentElement
+    const obs = new MutationObserver(() => {
+      setTheme(el.dataset.theme === 'dark' ? 'dark' : 'light')
+    })
+    obs.observe(el, { attributes: true, attributeFilter: ['data-theme'] })
+    return () => obs.disconnect()
+  }, [])
+  return theme
+}
 
 export interface PianoCanvasProps {
   onKeyPress?: (note: string) => void
@@ -11,6 +27,7 @@ export function PianoCanvas({ onKeyPress, initialHighlight }: PianoCanvasProps) 
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const pianoRef = useRef<Piano | null>(null)
   const [highlightedKey, setHighlightedKey] = useState<string | undefined>(initialHighlight)
+  const currentTheme = useCurrentTheme()
 
   // Initialize Piano and audio on mount
   useEffect(() => {
@@ -46,9 +63,9 @@ export function PianoCanvas({ onKeyPress, initialHighlight }: PianoCanvasProps) 
       onKeyPress?.(note)
 
       // Redraw piano with highlight
-      pianoRef.current.draw(note)
+      pianoRef.current.draw(note, getCanvasTheme(currentTheme).pianoHighlight)
     }
-  }, [onKeyPress])
+  }, [onKeyPress, currentTheme])
 
   // Initialize canvas and Piano
   useEffect(() => {
@@ -73,18 +90,18 @@ export function PianoCanvas({ onKeyPress, initialHighlight }: PianoCanvasProps) 
       
       // Initialize Piano instance
       pianoRef.current = new Piano(ctx, width, height)
-      
-      // Initial draw
-      pianoRef.current.draw(highlightedKey)
-    }
-  }, [highlightedKey])
 
-  // Redraw when highlight changes
+      // Initial draw
+      pianoRef.current.draw(highlightedKey, getCanvasTheme(currentTheme).pianoHighlight)
+    }
+  }, [highlightedKey, currentTheme])
+
+  // Redraw when highlight or theme changes
   useEffect(() => {
     if (pianoRef.current) {
-      pianoRef.current.draw(highlightedKey)
+      pianoRef.current.draw(highlightedKey, getCanvasTheme(currentTheme).pianoHighlight)
     }
-  }, [highlightedKey])
+  }, [highlightedKey, currentTheme])
 
   return (
     <canvas

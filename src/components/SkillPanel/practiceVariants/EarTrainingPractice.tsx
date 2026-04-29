@@ -47,7 +47,7 @@ export function EarTrainingPractice({ skill, onComplete }: EarTrainingPracticePr
             )}
           </div>
         </div>
-        <div className="lesson-actions" style={{ marginTop: '24px' }}>
+        <div className="lesson-actions">
           <button className="primary-button" onClick={handleComplete}>
             完成练习 →
           </button>

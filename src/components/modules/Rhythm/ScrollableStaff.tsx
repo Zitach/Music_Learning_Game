@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useCallback, useState } from 'react'
+import { useEffect, useRef, useCallback, useState } from 'react'
 
 export interface Note {
   number: number
@@ -241,7 +241,7 @@ function CanvasWithOffset({
     ctx.clearRect(0, 0, width, height)
 
     // Draw 5 horizontal staff lines
-    ctx.strokeStyle = '#475569'
+    ctx.strokeStyle = 'rgba(30, 27, 75, 0.35)'
     ctx.lineWidth = 1
 
     for (let i = 0; i < STAFF_LINE_COUNT; i++) {
@@ -255,7 +255,7 @@ function CanvasWithOffset({
     // Draw time signature
     if (timeSignature) {
       ctx.font = `bold 18px system-ui, sans-serif`
-      ctx.fillStyle = '#475569'
+      ctx.fillStyle = 'rgba(30, 27, 75, 0.55)'
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       ctx.fillText(timeSignature.top.toString(), STAVE_PADDING / 2, middleLineY - LINE_SPACING)
@@ -293,7 +293,7 @@ function CanvasWithOffset({
 
           ctx.beginPath()
           ctx.arc(dotX, dotY, DOT_RADIUS, 0, Math.PI * 2)
-          ctx.fillStyle = isCurrentNote ? '#0f172a' : '#475569'
+          ctx.fillStyle = isCurrentNote ? '#1E1B4B' : 'rgba(30, 27, 75, 0.35)'
           ctx.fill()
         }
       }
@@ -306,7 +306,7 @@ function CanvasWithOffset({
 
           ctx.beginPath()
           ctx.arc(dotX, dotY, DOT_RADIUS, 0, Math.PI * 2)
-          ctx.fillStyle = isCurrentNote ? '#0f172a' : '#475569'
+          ctx.fillStyle = isCurrentNote ? '#1E1B4B' : 'rgba(30, 27, 75, 0.35)'
           ctx.fill()
         }
       }
@@ -318,7 +318,7 @@ function CanvasWithOffset({
       // Highlight current note
       if (isCurrentNote) {
         const bgPadding = 4
-        ctx.fillStyle = '#f8d27a'
+        ctx.fillStyle = '#F59E0B'
         ctx.beginPath()
         ctx.roundRect(
           noteX - NUMBER_FONT_SIZE / 2 - bgPadding,
@@ -328,9 +328,9 @@ function CanvasWithOffset({
           4
         )
         ctx.fill()
-        ctx.fillStyle = '#0f172a'
+        ctx.fillStyle = '#1E1B4B'
       } else {
-        ctx.fillStyle = '#475569'
+        ctx.fillStyle = 'rgba(30, 27, 75, 0.35)'
       }
 
       ctx.fillText(note.number.toString(), noteX, noteY)

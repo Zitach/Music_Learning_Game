@@ -60,18 +60,18 @@ export function ScalesPractice({ onComplete }: ScalesPracticeProps) {
     const ctx = node.getContext('2d')
     if (!ctx) return
     
-    ctx.fillStyle = '#fff'
+    ctx.fillStyle = '#ffffff'
     ctx.fillRect(0, 0, node.width, node.height)
-    
+
     const size = 40
     const staffY = 80
     const lineSpacing = size / 4
-    
+
     // Draw treble clef
     drawTrebleClef({ ctx, x: 30, y: staffY, size })
-    
+
     // Draw staff lines
-    ctx.strokeStyle = '#000'
+    ctx.strokeStyle = '#1E1B4B'
     ctx.lineWidth = 1
     for (let i = 0; i < 5; i++) {
       ctx.beginPath()
@@ -79,32 +79,32 @@ export function ScalesPractice({ onComplete }: ScalesPracticeProps) {
       ctx.lineTo(node.width - 20, staffY + i * lineSpacing)
       ctx.stroke()
     }
-    
+
     // Draw scale notes on staff
     const startX = 120
     scaleNotes.forEach((note, i) => {
       const noteY = calculateNoteY(note, staffY, lineSpacing)
       const noteX = startX + i * 50
-      
+
       // Highlight current note
       if (i === currentIndex) {
-        ctx.fillStyle = feedback === 'correct' ? '#4f4' : feedback === 'wrong' ? '#f44' : '#ffcc00'
+        ctx.fillStyle = feedback === 'correct' ? '#10B981' : feedback === 'wrong' ? '#EF4444' : '#F59E0B'
         ctx.beginPath()
         ctx.arc(noteX, noteY, 12, 0, Math.PI * 2)
         ctx.fill()
       }
-      
+
       // Draw note head
-      ctx.fillStyle = '#000'
+      ctx.fillStyle = '#1E1B4B'
       ctx.beginPath()
       ctx.ellipse(noteX, noteY, 6, 5, -0.3, 0, Math.PI * 2)
       ctx.fill()
-      
+
       // Draw ledger lines if needed
       drawLedgerLines({ ctx, x: noteX, y: noteY, staffY, lineSpacing })
-      
+
       // Draw note name below
-      ctx.fillStyle = '#666'
+      ctx.fillStyle = 'rgba(30, 27, 75, 0.55)'
       ctx.font = '12px sans-serif'
       ctx.textAlign = 'center'
       ctx.fillText(note, noteX, staffY + 5 * lineSpacing + 15)

@@ -54,6 +54,15 @@
       "agent": "Sisyphus-Junior",
       "category": "deep",
       "updated_at": "2026-04-29T06:47:11.717Z"
+    },
+    "todo:15": {
+      "task_key": "todo:15",
+      "task_label": "15",
+      "task_title": "LearnView + AssessView 视觉重样式",
+      "session_id": "ses_227ff2a0cffefH9d6dL0dDwhpn",
+      "agent": "Sisyphus-Junior",
+      "category": "visual-engineering",
+      "updated_at": "2026-04-29T06:52:34.283Z"
     }
   }
 }

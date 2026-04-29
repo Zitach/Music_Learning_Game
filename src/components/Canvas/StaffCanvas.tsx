@@ -1,4 +1,20 @@
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback, useState } from 'react'
+import { getCanvasTheme } from '../../lib/canvas/canvasTheme'
+
+function useCurrentTheme(): 'light' | 'dark' {
+  const [theme, setTheme] = useState<'light' | 'dark'>(() =>
+    document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
+  )
+  useEffect(() => {
+    const el = document.documentElement
+    const obs = new MutationObserver(() => {
+      setTheme(el.dataset.theme === 'dark' ? 'dark' : 'light')
+    })
+    obs.observe(el, { attributes: true, attributeFilter: ['data-theme'] })
+    return () => obs.disconnect()
+  }, [])
+  return theme
+}
 
 export interface Note {
   number: number // 1-7 representing do, re, mi, fa, sol, la, si
@@ -51,6 +67,7 @@ export function StaffCanvas({
   height = 120,
 }: StaffCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const currentTheme = useCurrentTheme()
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current
@@ -59,6 +76,7 @@ export function StaffCanvas({
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    const theme = getCanvasTheme(currentTheme)
     const displayWidth = width
     const displayHeight = height
 
@@ -66,11 +84,13 @@ export function StaffCanvas({
     const staffTop = displayHeight / 2 - (STAFF_LINE_COUNT - 1) * LINE_SPACING / 2
     const middleLineY = staffTop + 2 * LINE_SPACING // Third line from top (index 2)
 
-    // Clear canvas
+    // Clear canvas and draw background
     ctx.clearRect(0, 0, displayWidth, displayHeight)
+    ctx.fillStyle = theme.staffBackground
+    ctx.fillRect(0, 0, displayWidth, displayHeight)
 
     // Draw 5 horizontal staff lines
-    ctx.strokeStyle = '#333333'
+    ctx.strokeStyle = theme.staffLine
     ctx.lineWidth = 1
 
     for (let i = 0; i < STAFF_LINE_COUNT; i++) {
@@ -84,7 +104,7 @@ export function StaffCanvas({
     // Draw time signature at the start (left side)
     if (timeSignature) {
       ctx.font = `bold ${TIME_SIGNATURE_FONT_SIZE}px system-ui, sans-serif`
-      ctx.fillStyle = '#333333'
+      ctx.fillStyle = theme.staffNote
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
 
@@ -122,7 +142,7 @@ export function StaffCanvas({
 
           ctx.beginPath()
           ctx.arc(dotX, dotY, DOT_RADIUS, 0, Math.PI * 2)
-          ctx.fillStyle = isCurrentNote ? '#4ade80' : '#333333'
+          ctx.fillStyle = isCurrentNote ? theme.staffNoteHighlight : theme.staffNote
           ctx.fill()
         }
       }
@@ -135,7 +155,7 @@ export function StaffCanvas({
 
           ctx.beginPath()
           ctx.arc(dotX, dotY, DOT_RADIUS, 0, Math.PI * 2)
-          ctx.fillStyle = isCurrentNote ? '#4ade80' : '#333333'
+          ctx.fillStyle = isCurrentNote ? theme.staffNoteHighlight : theme.staffNote
           ctx.fill()
         }
       }
@@ -148,7 +168,7 @@ export function StaffCanvas({
       // Highlight current note with background
       if (isCurrentNote) {
         const bgPadding = 4
-        ctx.fillStyle = '#4ade80'
+        ctx.fillStyle = theme.staffNoteHighlight
         ctx.beginPath()
         ctx.roundRect(
           noteX - NUMBER_FONT_SIZE / 2 - bgPadding,
@@ -161,12 +181,12 @@ export function StaffCanvas({
 
         ctx.fillStyle = '#ffffff'
       } else {
-        ctx.fillStyle = '#333333'
+        ctx.fillStyle = theme.staffNote
       }
 
       ctx.fillText(note.number.toString(), noteX, noteY)
     })
-  }, [notes, currentNoteIndex, timeSignature, width, height])
+  }, [notes, currentNoteIndex, timeSignature, width, height, currentTheme])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -193,7 +213,7 @@ export function StaffCanvas({
     return () => {
       // Cleanup if needed
     }
-  }, [draw, width, height])
+  }, [draw, width, height, currentTheme])
 
   return (
     <canvas

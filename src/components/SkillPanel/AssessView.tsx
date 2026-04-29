@@ -119,7 +119,7 @@ export function AssessView({ skill, onComplete }: AssessViewProps) {
               <div style={{ marginTop: 12 }}>
                 {newAchievements.map(id => {
                   const a = ACHIEVEMENTS.find(a => a.id === id)
-                  return a ? <p key={id} style={{ color: '#f8d27a', fontSize: 14 }}>{a.icon} 成就解锁：{a.title}</p> : null
+                  return a ? <p key={id} style={{ color: 'var(--gold)', fontSize: 14 }}>{a.icon} 成就解锁：{a.title}</p> : null
                 })}
               </div>
             )}

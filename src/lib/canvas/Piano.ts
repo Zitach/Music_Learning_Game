@@ -3,6 +3,8 @@
  * Draws a piano keyboard with click detection for musical notes
  */
 
+import type { CanvasTheme } from './canvasTheme'
+
 export interface KeyLayout {
   note: string
   x: number
@@ -35,6 +37,24 @@ export class Piano {
   private readonly BLACK_KEY_COLOR = '#1a1a1a'
   private readonly BLACK_KEY_BORDER = '#111111'
   private readonly SHADOW_COLOR = 'rgba(0, 0, 0, 0.3)'
+  private theme: CanvasTheme | null = null
+
+  private getThemeColors() {
+    if (this.theme) {
+      return {
+        whiteKey: this.theme.pianoWhiteKey,
+        blackKey: this.theme.pianoBlackKey,
+        whiteBorder: this.theme.staffLine,
+        blackBorder: this.theme.nodeText,
+      }
+    }
+    return {
+      whiteKey: this.WHITE_KEY_COLOR,
+      blackKey: this.BLACK_KEY_COLOR,
+      whiteBorder: this.WHITE_KEY_BORDER,
+      blackBorder: this.BLACK_KEY_BORDER,
+    }
+  }
 
   constructor(ctx: CanvasRenderingContext2D, width: number, height: number, config: PianoConfig = {}) {
     this.ctx = ctx
@@ -123,13 +143,27 @@ export class Piano {
   /**
    * Draws the piano keyboard
    * @param highlightedKey Optional note name to highlight (e.g., "C4", "D#4")
-   * @param highlightColor Optional color for highlight (defaults to green)
+   * @param themeOrColor Optional CanvasTheme or highlight color string
    */
-  draw(highlightedKey?: string, highlightColor: string = '#22c55e'): void {
+  draw(highlightedKey?: string, themeOrColor?: CanvasTheme | string): void {
     const ctx = this.ctx
+    let highlightColor = '#22c55e'
+
+    if (themeOrColor && typeof themeOrColor === 'object') {
+      this.theme = themeOrColor
+      highlightColor = themeOrColor.pianoHighlight
+    } else if (typeof themeOrColor === 'string') {
+      highlightColor = themeOrColor
+    }
 
     // Clear canvas
     ctx.clearRect(0, 0, this.width, this.height)
+
+    // Draw background
+    if (this.theme) {
+      ctx.fillStyle = this.theme.pianoBackground
+      ctx.fillRect(0, 0, this.width, this.height)
+    }
 
     // Draw white keys first (background layer)
     for (const key of this.whiteKeys) {
@@ -148,8 +182,10 @@ export class Piano {
 
     ctx.save()
 
+    const colors = this.getThemeColors()
+
     // Determine key color based on highlight state
-    let fillColor = this.WHITE_KEY_COLOR
+    let fillColor = colors.whiteKey
     if (highlightedKey && key.note === highlightedKey) {
       fillColor = highlightColor
     }
@@ -170,7 +206,7 @@ export class Piano {
     ctx.shadowColor = 'transparent'
 
     // Draw border
-    ctx.strokeStyle = this.WHITE_KEY_BORDER
+    ctx.strokeStyle = colors.whiteBorder
     ctx.lineWidth = 1
     ctx.stroke()
 
@@ -191,8 +227,10 @@ export class Piano {
 
     ctx.save()
 
+    const colors = this.getThemeColors()
+
     // Determine key color based on highlight state
-    let fillColor = this.BLACK_KEY_COLOR
+    let fillColor = colors.blackKey
     if (highlightedKey && key.note === highlightedKey) {
       fillColor = highlightColor
     }
@@ -213,7 +251,7 @@ export class Piano {
     ctx.shadowColor = 'transparent'
 
     // Draw border
-    ctx.strokeStyle = this.BLACK_KEY_BORDER
+    ctx.strokeStyle = colors.blackBorder
     ctx.lineWidth = 1
     ctx.stroke()
 

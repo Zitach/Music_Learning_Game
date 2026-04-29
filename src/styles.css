@@ -2,6 +2,7 @@
 @import './styles/map.css';
 @import './styles/chapter.css';
 @import './styles/lesson.css';
+@import './styles/practice.css';
 
 :root {
   color-scheme: light;
