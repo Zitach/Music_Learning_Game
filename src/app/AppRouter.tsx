@@ -1,11 +1,24 @@
-﻿import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import type { AppScreen } from './appState'
 import { TitleScreen } from '../components/Opening/TitleScreen'
+import { DemoAnimation } from '../components/modules/NoteNames/DemoAnimation'
 import { InstrumentPicker } from '../components/Opening/InstrumentPicker'
 import { NicknameInput } from '../components/Opening/NicknameInput'
 
 const WorldMapCanvas = lazy(async () => ({ default: (await import('../components/Canvas/WorldMapCanvas')).WorldMapCanvas }))
 const SkillPanel = lazy(async () => ({ default: (await import('../components/SkillPanel/SkillPanel')).SkillPanel }))
+
+function ChapterFallback({ onBackToMap }: { onBackToMap: () => void }) {
+  useEffect(() => {
+    onBackToMap()
+  }, [onBackToMap])
+
+  return (
+    <div className="floating-panel fade-up" style={{ textAlign: 'center', padding: '24px' }}>
+      <p>章节加载失败，返回地图...</p>
+    </div>
+  )
+}
 
 function AudioGate({ onDismiss, initError }: { onDismiss: () => void; initError: string | null }) {
   return (
@@ -33,6 +46,7 @@ export interface AppRouterProps {
   initError: string | null
   onDismissAudioGate: () => void
   onTitleStart: () => void
+  onDemoDone: () => void
   onInstrumentNext: () => void
   onNicknameComplete: () => void
   onChapterClick: (chapterId: string) => void
@@ -47,16 +61,22 @@ export function AppRouter(props: AppRouterProps) {
       return <AudioGate onDismiss={props.onDismissAudioGate} initError={props.initError} />
     case 'opening-title':
       return <TitleScreen onStart={props.onTitleStart} />
+    case 'opening-demo':
+      return <DemoAnimation onComplete={props.onDemoDone} />
     case 'opening-instrument':
       return <InstrumentPicker onNext={props.onInstrumentNext} />
     case 'opening-nickname':
       return <NicknameInput onComplete={props.onNicknameComplete} />
-    case 'chapter':
-      return props.selectedChapterId ? (
+    case 'chapter': {
+      if (!props.selectedChapterId) {
+        return <ChapterFallback onBackToMap={props.onBackToMap} />
+      }
+      return (
         <Suspense fallback={fallback}>
           <SkillPanel chapterId={props.selectedChapterId} onBack={props.onBackToMap} />
         </Suspense>
-      ) : null
+      )
+    }
     case 'map':
     default:
       return (

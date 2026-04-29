@@ -1,20 +1,28 @@
-﻿import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
 import { AppRouter } from './app/AppRouter'
 import { AppShell } from './app/AppShell'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { appReducer, createInitialAppUiState } from './app/appReducer'
 import { usePlayerStore } from './stores/playerStore'
 import { useProgressStore } from './stores/progressStore'
 import { audioEngine } from './lib/audio/Engine'
 import { useAudioPolicy } from './lib/audio/audioPolicy'
+import { useStreakStore } from './domain/streaks/streakTracker'
+import type { TransitionStyle } from './lib/ui/transitions'
 
 export default function App() {
   const hasCompletedOpening = usePlayerStore(state => state.hasCompletedOpening)
   const nickname = usePlayerStore(state => state.nickname)
   const level = usePlayerStore(state => state.level)
   const isChapterUnlocked = useProgressStore(state => state.isChapterUnlocked)
+  const checkIn = useStreakStore(state => state.checkIn)
   const { initError } = useAudioPolicy()
   const [state, dispatch] = useReducer(appReducer, hasCompletedOpening, createInitialAppUiState)
   const previousLevelRef = useRef(level)
+
+  useEffect(() => {
+    checkIn()
+  }, [checkIn])
 
   useEffect(() => {
     if (hasCompletedOpening && state.screen === 'audio-gate') {
@@ -30,21 +38,19 @@ export default function App() {
   }, [state.mapMessage])
 
   useEffect(() => {
-    if (!state.transitionLabel) return
-    const timer = window.setTimeout(() => dispatch({ type: 'clearTransition' }), 900)
-    return () => window.clearTimeout(timer)
-  }, [state.transitionLabel])
-
-  useEffect(() => {
     if (level > previousLevelRef.current) {
       audioEngine.playUiLevelUp()
-      dispatch({ type: 'showTransition', label: `等级提升 · LV ${level}` })
+      dispatch({ type: 'showTransition', label: `等级提升 · LV ${level}`, style: 'levelUp' })
     }
     previousLevelRef.current = level
   }, [level])
 
-  const showTransition = useCallback((label: string) => {
-    dispatch({ type: 'showTransition', label })
+  const showTransition = useCallback((label: string, style?: TransitionStyle) => {
+    dispatch({ type: 'showTransition', label, style })
+  }, [])
+
+  const clearTransition = useCallback(() => {
+    dispatch({ type: 'clearTransition' })
   }, [])
 
   const handleDismissAudioGate = useCallback(() => {
@@ -54,19 +60,25 @@ export default function App() {
 
   const handleTitleStart = useCallback(() => {
     audioEngine.playUiConfirm()
-    showTransition('旅程开始')
+    showTransition('旅程开始', 'fade')
     dispatch({ type: 'startOpening' })
+  }, [showTransition])
+
+  const handleDemoDone = useCallback(() => {
+    audioEngine.playUiConfirm()
+    showTransition('选择你的乐器', 'fade')
+    dispatch({ type: 'demoDone' })
   }, [showTransition])
 
   const handleInstrumentNext = useCallback(() => {
     audioEngine.playUiConfirm()
-    showTransition('选择乐器')
+    showTransition('选择乐器', 'banner')
     dispatch({ type: 'selectInstrumentDone' })
   }, [showTransition])
 
   const handleNicknameComplete = useCallback(() => {
     audioEngine.playUiSuccess()
-    showTransition('进入音乐世界')
+    showTransition('进入音乐世界', 'fade')
     dispatch({ type: 'nicknameDone' })
   }, [showTransition])
 
@@ -77,34 +89,42 @@ export default function App() {
       return
     }
     audioEngine.playUiConfirm()
-    showTransition('进入章节')
+    showTransition('进入章节', 'banner')
     dispatch({ type: 'chapterSelected', chapterId })
   }, [isChapterUnlocked, showTransition])
 
   const handleBackToMap = useCallback(() => {
     audioEngine.playUiConfirm()
-    showTransition('返回地图')
+    showTransition('返回地图', 'banner')
     dispatch({ type: 'chapterBack' })
   }, [showTransition])
 
   const showHud = useMemo(() => state.screen === 'map' || state.screen === 'chapter', [state.screen])
 
   return (
-    <AppShell showHud={showHud} transitionLabel={state.transitionLabel}>
-      <AppRouter
-        screen={state.screen}
-        selectedChapterId={state.selectedChapterId}
-        nickname={nickname}
-        level={level}
-        mapMessage={state.mapMessage}
-        initError={initError}
-        onDismissAudioGate={handleDismissAudioGate}
-        onTitleStart={handleTitleStart}
-        onInstrumentNext={handleInstrumentNext}
-        onNicknameComplete={handleNicknameComplete}
-        onChapterClick={handleChapterClick}
-        onBackToMap={handleBackToMap}
-      />
-    </AppShell>
+    <ErrorBoundary>
+      <AppShell
+        showHud={showHud}
+        transitionLabel={state.transitionLabel}
+        transitionStyle={state.transitionStyle}
+        onTransitionDismiss={clearTransition}
+      >
+        <AppRouter
+          screen={state.screen}
+          selectedChapterId={state.selectedChapterId}
+          nickname={nickname}
+          level={level}
+          mapMessage={state.mapMessage}
+          initError={initError}
+          onDismissAudioGate={handleDismissAudioGate}
+          onTitleStart={handleTitleStart}
+          onDemoDone={handleDemoDone}
+          onInstrumentNext={handleInstrumentNext}
+          onNicknameComplete={handleNicknameComplete}
+          onChapterClick={handleChapterClick}
+          onBackToMap={handleBackToMap}
+        />
+      </AppShell>
+    </ErrorBoundary>
   )
 }
