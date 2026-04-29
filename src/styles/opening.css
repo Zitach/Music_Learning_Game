@@ -79,7 +79,6 @@
 .hero-title .accent {
   display: block;
   color: var(--primary);
-  text-shadow: 0 0 28px rgba(107, 78, 230, 0.18);
 }
 
 .hero-copy,
@@ -152,7 +151,7 @@
   border-radius: 50%;
   background:
     radial-gradient(circle at center, rgba(139,92,246,0.2) 0 14%, rgba(107,78,230,0.08) 14% 42%, rgba(139,92,246,0.05) 43% 50%, rgba(107,78,230,0.06) 51% 100%);
-  box-shadow: 0 26px 40px rgba(0,0,0,0.10);
+  box-shadow: 0 26px 40px rgba(107, 78, 230, 0.12);
   animation: spinSlow 18s linear infinite;
 }
 
@@ -210,9 +209,15 @@
 .choice-card:hover,
 .choice-card.is-selected {
   transform: translateY(-4px);
-  border-color: var(--primary-light);
-  background: rgba(107, 78, 230, 0.08);
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #FFFFFF;
   box-shadow: var(--shadow);
+}
+
+.choice-card.is-selected .choice-copy,
+.choice-card:hover .choice-copy {
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .choice-emoji {
@@ -242,8 +247,8 @@
 }
 
 .text-input:focus {
-  border-color: var(--primary-light);
-  box-shadow: 0 0 0 4px rgba(107, 78, 230, 0.12);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(107, 78, 230, 0.15);
 }
 
 .text-input.is-error {

@@ -36,6 +36,15 @@
       "agent": "Sisyphus-Junior",
       "category": "quick",
       "updated_at": "2026-04-29T05:39:07.028Z"
+    },
+    "todo:9": {
+      "task_key": "todo:9",
+      "task_label": "9",
+      "task_title": "Opening 流程重样式 (TitleScreen + InstrumentPicker + NicknameInput)",
+      "session_id": "ses_22824a02fffebu1592zH2aX3s4",
+      "agent": "Sisyphus-Junior",
+      "category": "visual-engineering",
+      "updated_at": "2026-04-29T06:39:32.854Z"
     }
   }
 }

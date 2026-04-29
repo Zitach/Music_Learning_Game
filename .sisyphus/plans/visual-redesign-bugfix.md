@@ -911,7 +911,7 @@ Max Concurrent: 4 (Waves 3-5)
   - Files: `src/components/HUD/*.tsx` (CSS classes), `src/styles.css`
   - Pre-commit: `npm run typecheck`
 
-- [ ] 9. Opening 流程重样式 (TitleScreen + InstrumentPicker + NicknameInput)
+- [x] 9. Opening 流程重样式 (TitleScreen + InstrumentPicker + NicknameInput)
 
   **What to do**:
   - **TitleScreen**: 白底/浅紫渐变背景，大标题使用 Poppins Bold + --primary 紫色，CTA 按钮使用 --primary 紫色填充，特性列表使用紫色图标
