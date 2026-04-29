@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { CHAPTERS } from '../../data/chapters'
 import { useProgressStore } from '../../stores/progressStore'
 import { getCompletedSkills } from '../../domain/progress/progressSelectors'
@@ -97,7 +97,7 @@ export function SkillPanel({ chapterId, onBack }: SkillPanelProps) {
           <div className="chapter-meter"><div className="chapter-meter-track"><div className="chapter-meter-fill" style={{ width: `${(completedSkills / chapter.skills.length) * 100}%`, background: chapter.color }} /></div></div>
         </div>
         <div className="chapter-timeline floating-panel">
-          <div className="chapter-timeline-line" style={{ background: `linear-gradient(180deg, ${chapter.color}, rgba(255,255,255,0.08))` }} />
+          <div className="chapter-timeline-line" style={{ background: `linear-gradient(180deg, ${chapter.color}, var(--line))` }} />
           {chapter.skills.map(skill => {
             const progress = skillProgress[skill.id]
             const unlocked = isSkillUnlocked(skill.id)

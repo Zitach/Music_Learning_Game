@@ -213,7 +213,7 @@ input {
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, var(--primary), var(--primary-light));
-  box-shadow: 0 0 18px rgba(107, 78, 230, 0.35);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--primary) 35%, transparent);
 }
 
 .heart {
@@ -269,7 +269,7 @@ input {
 }
 
 .combo-chip.is-active {
-  box-shadow: 0 0 24px rgba(107, 78, 230, 0.25);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--primary) 25%, transparent);
 }
 
 .combo-label {
@@ -289,7 +289,7 @@ input {
 .combo-value.combo-pop {
   animation: comboPop 280ms cubic-bezier(0.34, 1.56, 0.64, 1);
   color: var(--primary);
-  text-shadow: 0 0 14px rgba(107, 78, 230, 0.45);
+  text-shadow: 0 0 14px color-mix(in srgb, var(--primary) 45%, transparent);
 }
 
 @keyframes comboPop {
@@ -348,7 +348,7 @@ input {
 /* — fade (full-screen fade to black and back) — */
 
 .transition-overlay--fade {
-  background: #000;
+  background: var(--bg-0);
   animation: transitionFade 400ms ease both;
 }
 
@@ -391,7 +391,7 @@ input {
 /* — levelUp (celebratory scale + glow) — */
 
 .transition-overlay--levelUp {
-  background: radial-gradient(circle at center, rgba(139, 92, 246, 0.10), var(--panel-strong));
+  background: radial-gradient(circle at center, color-mix(in srgb, var(--primary) 12%, transparent), var(--panel-strong));
   animation: transitionLevelUpBg 1500ms ease both;
 }
 
@@ -404,7 +404,7 @@ input {
 
 .transition-levelUp-icon {
   font-size: 32px;
-  filter: drop-shadow(0 0 18px rgba(139, 92, 246, 0.5));
+  filter: drop-shadow(0 0 18px color-mix(in srgb, var(--primary) 50%, transparent));
   animation: levelUpIconSpin 800ms ease both;
 }
 
@@ -413,7 +413,7 @@ input {
   font-size: 30px;
   font-weight: 700;
   letter-spacing: 1.2px;
-  text-shadow: 0 0 32px rgba(107, 78, 230, 0.4), 0 0 64px rgba(107, 78, 230, 0.2);
+  text-shadow: 0 0 32px color-mix(in srgb, var(--primary) 40%, transparent), 0 0 64px color-mix(in srgb, var(--primary) 20%, transparent);
 }
 
 @keyframes transitionLevelUpBg {
@@ -463,8 +463,8 @@ input {
 }
 
 @keyframes unlockPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(107, 78, 230, 0.4); }
-  50% { box-shadow: 0 0 0 10px rgba(107, 78, 230, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 40%, transparent); }
+  50% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--primary) 0%, transparent); }
 }
 
 @keyframes cardEnter {

@@ -1,9 +1,24 @@
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback, useState } from 'react'
 import { WorldMapRenderer } from '../../lib/canvas/WorldMapRenderer'
 import { MAP_WIDTH, MAP_HEIGHT } from '../../lib/canvas/WorldMapData'
 import { useProgressStore } from '../../stores/progressStore'
 import { CHAPTERS } from '../../data/chapters'
 import { ChapterListOverlay } from '../../features/map/ChapterListOverlay'
+
+function useCurrentTheme() {
+  const [theme, setTheme] = useState(() =>
+    document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
+  )
+  useEffect(() => {
+    const el = document.documentElement
+    const obs = new MutationObserver(() => {
+      setTheme(el.dataset.theme === 'dark' ? 'dark' : 'light')
+    })
+    obs.observe(el, { attributes: true, attributeFilter: ['data-theme'] })
+    return () => obs.disconnect()
+  }, [])
+  return theme
+}
 
 export interface WorldMapCanvasProps {
   onChapterClick: (chapterId: string) => void
@@ -15,6 +30,7 @@ export function WorldMapCanvas({ onChapterClick }: WorldMapCanvasProps) {
   const rafRef = useRef(0)
   const scaleRef = useRef(1)
   const dprRef = useRef(1)
+  const currentTheme = useCurrentTheme()
   const skillProgress = useProgressStore(s => s.skillProgress)
   const completedChapters = new Set(
     CHAPTERS.filter(c => c.skills.every(s => skillProgress[s.id]?.status === 'completed')).map(c => c.id)
@@ -55,6 +71,7 @@ export function WorldMapCanvas({ onChapterClick }: WorldMapCanvasProps) {
     if (!ctx) return
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     const renderer = new WorldMapRenderer(ctx)
+    renderer.refreshTheme()
     renderer.setProgress(completedChapters, availableChapterId, chapterProgress)
     renderer.startAnimation()
     rendererRef.current = renderer
@@ -68,7 +85,7 @@ export function WorldMapCanvas({ onChapterClick }: WorldMapCanvasProps) {
     return () => {
       cancelAnimationFrame(rafRef.current)
     }
-  }, [availableChapterId, skillProgress, completedChapters, chapterProgress])
+  }, [availableChapterId, skillProgress, completedChapters, chapterProgress, currentTheme])
 
   const handleClick = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
     if (!canvasRef.current || !rendererRef.current) return

@@ -1037,7 +1037,7 @@ Max Concurrent: 4 (Waves 3-5)
   - Files: `src/components/modules/NoteNames/DemoAnimation.tsx` (CSS)
   - Pre-commit: `npm run typecheck`
 
-- [ ] 11. WorldMapCanvas + ChapterListOverlay 重样式
+- [x] 11. WorldMapCanvas + ChapterListOverlay 重样式
 
   **What to do**:
   - **WorldMapCanvas**: 背景从暗色改为明亮浅色/白色，节点颜色更新，路径颜色更新
@@ -1100,7 +1100,7 @@ Max Concurrent: 4 (Waves 3-5)
   - Files: `src/components/Canvas/WorldMapCanvas.tsx` (CSS), `src/features/map/ChapterListOverlay.tsx`, `src/styles/map.css`
   - Pre-commit: `npm run typecheck`
 
-- [ ] 12. WorldMapRenderer Canvas 颜色更新
+- [x] 12. WorldMapRenderer Canvas 颜色更新
 
   **What to do**:
   - 在 `src/lib/canvas/WorldMapRenderer.ts` 中引入 `canvasTheme.ts`
@@ -1168,7 +1168,7 @@ Max Concurrent: 4 (Waves 3-5)
   - Files: `src/lib/canvas/WorldMapRenderer.ts`
   - Pre-commit: `npm run typecheck`
 
-- [ ] 13. SkillPanel + 技能时间线重样式
+- [x] 13. SkillPanel + 技能时间线重样式
 
   **What to do**:
   - **SkillPanel**: 章节页面容器从暗色改为白底 + 紫色强调
@@ -1227,7 +1227,7 @@ Max Concurrent: 4 (Waves 3-5)
   - Files: `src/components/SkillPanel/SkillPanel.tsx` (CSS), `src/styles/chapter.css`
   - Pre-commit: `npm run typecheck`
 
-- [ ] 14. TransitionOverlay + EffectsProvider 重样式
+- [x] 14. TransitionOverlay + EffectsProvider 重样式
 
   **What to do**:
   - **TransitionOverlay**: 将过渡动画颜色从暗色改为紫色系

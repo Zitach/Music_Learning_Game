@@ -1,9 +1,16 @@
 import { CHAPTERS } from '../../data/chapters'
 import { MAP_EDGES, MAP_WIDTH, MAP_HEIGHT, NODE_RADIUS } from './WorldMapData'
+import { getCanvasTheme, type CanvasTheme } from './canvasTheme'
 
 interface ChapterProgress {
   completedSkills: number
   totalSkills: number
+}
+
+function detectTheme(): 'light' | 'dark' {
+  const attr = document.documentElement.dataset.theme
+  if (attr === 'dark') return 'dark'
+  return 'light'
 }
 
 export class WorldMapRenderer {
@@ -12,6 +19,7 @@ export class WorldMapRenderer {
   private availableChapterId: string | null = null
   private chapterProgress: Map<string, ChapterProgress> = new Map()
   private animationStart = 0
+  private theme: CanvasTheme = getCanvasTheme(detectTheme())
 
   constructor(ctx: CanvasRenderingContext2D) {
     this.ctx = ctx
@@ -31,6 +39,10 @@ export class WorldMapRenderer {
     this.animationStart = performance.now()
   }
 
+  refreshTheme() {
+    this.theme = getCanvasTheme(detectTheme())
+  }
+
   private scaleX(norm: number) { return norm * MAP_WIDTH }
   private scaleY(norm: number) { return norm * MAP_HEIGHT }
 
@@ -41,11 +53,12 @@ export class WorldMapRenderer {
 
   draw(elapsed: number = 0) {
     const ctx = this.ctx
+    const t = this.theme
     ctx.clearRect(0, 0, MAP_WIDTH, MAP_HEIGHT)
 
     // Draw edges with animation
     for (const [from, to] of MAP_EDGES) {
-      this.drawEdge(from, to, elapsed)
+      this.drawEdge(from, to, elapsed, t)
     }
 
     // Draw nodes
@@ -53,11 +66,11 @@ export class WorldMapRenderer {
       const completed = this.completedChapters.has(chapter.id)
       const available = chapter.id === this.availableChapterId
       const progress = this.chapterProgress.get(chapter.id)
-      this.drawNode(chapter, completed, available, progress, elapsed)
+      this.drawNode(chapter, completed, available, progress, elapsed, t)
     }
   }
 
-  private drawEdge(fromId: string, toId: string, elapsed: number) {
+  private drawEdge(fromId: string, toId: string, elapsed: number, t: CanvasTheme) {
     const ctx = this.ctx
     const from = CHAPTERS.find(c => c.id === fromId)!
     const to = CHAPTERS.find(c => c.id === toId)!
@@ -76,10 +89,10 @@ export class WorldMapRenderer {
     ctx.lineCap = 'round'
 
     if (fromDone) {
-      ctx.strokeStyle = '#a0c0a0'
+      ctx.strokeStyle = t.pathActive
       ctx.setLineDash([])
     } else {
-      ctx.strokeStyle = 'rgba(200, 192, 176, 0.5)'
+      ctx.strokeStyle = t.pathDefault
       ctx.setLineDash([6, 4])
       // Animate dash offset for "flowing" effect
       ctx.lineDashOffset = -elapsed * 0.03
@@ -94,7 +107,8 @@ export class WorldMapRenderer {
     completed: boolean,
     available: boolean,
     progress: ChapterProgress | undefined,
-    elapsed: number
+    elapsed: number,
+    t: CanvasTheme
   ) {
     const ctx = this.ctx
     const cx = this.scaleX(chapter.position.x)
@@ -105,17 +119,17 @@ export class WorldMapRenderer {
     // Pulse glow for available chapters
     if (available && !completed) {
       const pulse = Math.sin(elapsed * 0.003) * 0.5 + 0.5
-      ctx.shadowColor = chapter.color + '66'
+      ctx.shadowColor = t.nodeCurrent + '66'
       ctx.shadowBlur = 8 + pulse * 12
     }
 
     ctx.shadowOffsetY = 4
-    ctx.shadowColor = 'rgba(0,0,0,0.2)'
+    ctx.shadowColor = 'rgba(0,0,0,0.12)'
 
     // Main circle
     ctx.beginPath()
     ctx.arc(cx, cy, NODE_RADIUS, 0, Math.PI * 2)
-    ctx.fillStyle = completed ? chapter.color : available ? chapter.color : '#444'
+    ctx.fillStyle = completed ? t.nodeCompleted : available ? t.nodeCurrent : t.nodeLocked
     ctx.globalAlpha = completed ? 0.9 : available ? 0.7 : 0.35
     ctx.fill()
 
@@ -125,7 +139,7 @@ export class WorldMapRenderer {
       ctx.globalAlpha = 0.7
       ctx.beginPath()
       ctx.arc(cx, cy, NODE_RADIUS + 4, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * ratio)
-      ctx.strokeStyle = '#f8d27a'
+      ctx.strokeStyle = t.warning
       ctx.lineWidth = 3
       ctx.lineCap = 'round'
       ctx.stroke()
@@ -133,7 +147,7 @@ export class WorldMapRenderer {
 
     ctx.globalAlpha = 1
     ctx.shadowColor = 'transparent'
-    ctx.strokeStyle = completed ? '#ffffff88' : available ? chapter.color : '#666'
+    ctx.strokeStyle = completed ? '#ffffff88' : available ? t.nodeCurrent : t.nodeBorder
     ctx.lineWidth = completed ? 3 : available ? 2.5 : 1.5
     ctx.stroke()
 
@@ -145,7 +159,7 @@ export class WorldMapRenderer {
 
     // Title
     ctx.font = '11px "Noto Sans SC", "PingFang SC", sans-serif'
-    ctx.fillStyle = completed ? '#d0f0d0' : available ? '#e0d8c8' : '#888'
+    ctx.fillStyle = completed ? t.success : available ? t.text : t.textMuted
     ctx.textBaseline = 'alphabetic'
     ctx.fillText(chapter.title, cx, cy + NODE_RADIUS + 16)
 

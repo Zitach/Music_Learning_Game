@@ -45,6 +45,15 @@
       "agent": "Sisyphus-Junior",
       "category": "visual-engineering",
       "updated_at": "2026-04-29T06:39:32.854Z"
+    },
+    "todo:11": {
+      "task_key": "todo:11",
+      "task_label": "11",
+      "task_title": "WorldMapCanvas + ChapterListOverlay 重样式",
+      "session_id": "ses_228081a3effeSHEvxjRW3aWtSj",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-04-29T06:47:11.717Z"
     }
   }
 }
