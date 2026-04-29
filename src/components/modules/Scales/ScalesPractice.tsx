@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { drawTrebleClef } from '../../../lib/music/clef'
 import { drawLedgerLines } from '../../../lib/music/notation'
 import { useGameStore } from '../../../lib/stores/gameStore'
+import { audioEngine } from '../../../lib/audio/Engine'
 
 type ScaleType = 'major' | 'naturalMinor' | 'pentatonic'
 
@@ -36,8 +37,13 @@ export function ScalesPractice({ onComplete }: ScalesPracticeProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null)
   const { recordHit, recordMiss } = useGameStore()
-  
+
   const scaleNotes = getScaleNotes(currentScale.root, currentScale.type)
+
+  // Ensure audio engine is loaded
+  useEffect(() => {
+    audioEngine.load()
+  }, [])
   
   // Keyboard mapping
   const keyToNote: Record<string, string> = {
@@ -113,7 +119,13 @@ export function ScalesPractice({ onComplete }: ScalesPracticeProps) {
       const key = e.key.toUpperCase()
       const playedNote = keyToNote[key]
       const expectedNote = scaleNotes[currentIndex]
-      
+
+      // Play the pressed note via Tone.js
+      if (playedNote) {
+        const octaveNote = playedNote.includes('5') ? playedNote : playedNote + '4'
+        audioEngine.playNote(octaveNote, '8n')
+      }
+
       if (playedNote === expectedNote) {
         setFeedback('correct')
         recordHit()

@@ -1,4 +1,4 @@
-﻿import type { AppAction, AppUiState } from './appState'
+import type { AppAction, AppUiState } from './appState'
 
 export function createInitialAppUiState(hasCompletedOpening: boolean): AppUiState {
   return {
@@ -14,6 +14,8 @@ export function appReducer(state: AppUiState, action: AppAction): AppUiState {
     case 'audioGateDismissed':
       return { ...state, screen: 'opening-title' }
     case 'startOpening':
+      return { ...state, screen: 'opening-demo' }
+    case 'demoDone':
       return { ...state, screen: 'opening-instrument' }
     case 'selectInstrumentDone':
       return { ...state, screen: 'opening-nickname' }
@@ -28,9 +30,9 @@ export function appReducer(state: AppUiState, action: AppAction): AppUiState {
     case 'clearMapMessage':
       return { ...state, mapMessage: null }
     case 'showTransition':
-      return { ...state, transitionLabel: action.label }
+      return { ...state, transitionLabel: action.label, transitionStyle: action.style }
     case 'clearTransition':
-      return { ...state, transitionLabel: null }
+      return { ...state, transitionLabel: null, transitionStyle: undefined }
     default:
       return state
   }

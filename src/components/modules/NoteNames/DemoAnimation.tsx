@@ -4,6 +4,7 @@ import { audioEngine } from '../../../lib/audio/Engine'
 
 interface DemoAnimationProps {
   onComplete: () => void
+  onSkip?: () => void
 }
 
 type AnimationPhase = 'idle' | 'keyDown' | 'floating' | 'complete'
@@ -12,13 +13,26 @@ const DEMO_DURATION = 3000
 const KEY_PRESS_DELAY = 500
 const KEY_PRESS_DURATION = 800
 
-export function DemoAnimation({ onComplete }: DemoAnimationProps) {
+export function DemoAnimation({ onComplete, onSkip }: DemoAnimationProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const pianoRef = useRef<Piano | null>(null)
   const animationFrameRef = useRef<number | null>(null)
   const [phase, setPhase] = useState<AnimationPhase>('idle')
   const [floatingText, setFloatingText] = useState(false)
   const startTimeRef = useRef<number>(0)
+
+  const handleSkip = useCallback(() => {
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current)
+      animationFrameRef.current = null
+    }
+    setPhase('complete')
+    if (onSkip) {
+      onSkip()
+    } else {
+      onComplete()
+    }
+  }, [onSkip, onComplete])
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current
@@ -218,6 +232,36 @@ export function DemoAnimation({ onComplete }: DemoAnimationProps) {
           pointerEvents: 'none',
         }}
       />
+
+      {/* Skip button */}
+      <button
+        onClick={handleSkip}
+        style={{
+          position: 'absolute',
+          top: '24px',
+          right: '24px',
+          padding: '10px 20px',
+          background: 'rgba(255, 255, 255, 0.08)',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+          borderRadius: '8px',
+          color: 'rgba(255, 255, 255, 0.6)',
+          fontFamily: "'Inter', -apple-system, sans-serif",
+          fontSize: '14px',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
+          zIndex: 10,
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.14)'
+          e.currentTarget.style.color = 'rgba(255, 255, 255, 0.9)'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'
+          e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)'
+        }}
+      >
+        跳过 →
+      </button>
 
       {/* Key indicator */}
       {phase === 'keyDown' || phase === 'floating' ? (

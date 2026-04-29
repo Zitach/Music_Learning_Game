@@ -1,8 +1,10 @@
-﻿import { useMemo } from 'react'
+﻿import { useMemo, useEffect } from 'react'
 import { Skill } from '../../data/chapters'
 import { PianoCanvas } from '../Canvas/PianoCanvas'
 import { getShuffledQuestionsForSkill } from '../../data/questionBank'
 import { useQuestionSession } from '../../features/practice/useQuestionSession'
+import { audioEngine } from '../../lib/audio/Engine'
+import { useGameStore } from '../../lib/stores/gameStore'
 
 interface PracticeViewProps {
   skill: Skill
@@ -13,6 +15,21 @@ export function PracticeView({ skill, onComplete }: PracticeViewProps) {
   const tasks = useMemo(() => getShuffledQuestionsForSkill(skill.id, 'practice'), [skill.id])
   const session = useQuestionSession({ questions: tasks, onComplete: () => onComplete(), successDelay: 700, errorDelay: 1500 })
   const currentTask = session.currentQuestion
+  const combo = useGameStore(s => s.combo)
+
+  useEffect(() => {
+    if (session.feedback === 'correct') {
+      audioEngine.playAnswerCorrect()
+    } else if (session.feedback === 'wrong') {
+      audioEngine.playAnswerWrong()
+    }
+  }, [session.feedback])
+
+  useEffect(() => {
+    if (combo > 0 && combo % 5 === 0) {
+      audioEngine.playComboMilestone(combo)
+    }
+  }, [combo])
 
   if (!currentTask) {
     return (

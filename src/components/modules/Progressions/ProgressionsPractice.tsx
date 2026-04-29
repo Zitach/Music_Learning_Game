@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useGameStore } from '../../../lib/stores/gameStore'
+import { audioEngine } from '../../../lib/audio/Engine'
 
 // Common chord progressions in Roman numeral notation
 const PROGRESSIONS = [
@@ -15,17 +16,16 @@ const PROGRESSIONS = [
 
 const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 
-// Map numerals to chord intervals (used for future audio synthesis)
-// @ts-ignore - Reserved for audio synthesis implementation
+// Map numerals to chord intervals (used for audio synthesis)
 const NUMERAL_INTERVALS: Record<string, number[]> = {
-  'I': [0, 4, 7],      // Major
-  'ii': [0, 3, 7],     // Minor
-  'iii': [0, 4, 7],   // Major
-  'IV': [0, 5, 9],    // Major
-  'V': [0, 4, 7],     // Major
-  'vi': [0, 3, 7],    // Minor
-  'vii': [0, 3, 6],   // Diminished
-  'iv': [0, 3, 7],    // Minor
+  'I': [0, 4, 7],      // Major tonic
+  'ii': [0, 3, 7],     // Minor supertonic
+  'iii': [0, 4, 7],    // Major mediant
+  'IV': [0, 5, 9],     // Major subdominant
+  'V': [0, 4, 7],      // Major dominant
+  'vi': [0, 3, 7],     // Minor submediant
+  'vii': [0, 3, 6],    // Diminished leading tone
+  'iv': [0, 3, 7],     // Minor subdominant
 }
 
 interface ProgressionsPracticeProps {
@@ -39,7 +39,12 @@ export function ProgressionsPractice({ onComplete: _onComplete }: ProgressionsPr
   const [hasPlayed, setHasPlayed] = useState(false)
   const [_currentChordIndex, setCurrentChordIndex] = useState(0)
   const { recordHit, recordMiss } = useGameStore()
-  
+
+  // Ensure audio engine is loaded
+  useEffect(() => {
+    audioEngine.load()
+  }, [])
+
   // Generate new progression question
   const generateQuestion = useCallback(() => {
     const rootIndex = Math.floor(Math.random() * 12)
@@ -50,17 +55,30 @@ export function ProgressionsPractice({ onComplete: _onComplete }: ProgressionsPr
     setCurrentChordIndex(0)
     setFeedback(null)
   }, [])
-  
+
   useEffect(() => {
     generateQuestion()
   }, [generateQuestion])
-  
-  // Play progression one chord at a time
+
+  // Play progression using Tone.js — builds chord notes from numeral intervals
   const playProgression = () => {
-    if (!targetProgression) return
+    if (!targetProgression || !rootNote) return
     setHasPlayed(true)
-    // Play each chord in sequence
-    // Audio synthesis would go here
+
+    const rootIndex = NOTE_NAMES.indexOf(rootNote)
+
+    const chords = targetProgression.numerals.map(numeral => {
+      const intervals = NUMERAL_INTERVALS[numeral]
+      if (!intervals) return ['C4']
+      return intervals.map(interval => {
+        const noteIndex = (rootIndex + interval) % 12
+        const noteName = NOTE_NAMES[noteIndex]
+        const octave = rootIndex + interval >= 12 ? 5 : 4
+        return noteName + octave
+      })
+    })
+
+    audioEngine.playProgression(chords, 100)
   }
   
   // Handle progression selection

@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
 export type Instrument = 'piano' | 'guitar' | 'ukulele' | null
+export type Theme = 'dark' | 'light'
 
 export interface PlayerState {
   nickname: string
@@ -11,6 +12,8 @@ export interface PlayerState {
   xp: number
   level: number
   hasCompletedOpening: boolean
+  theme: Theme
+  completedTutorials: string[]
 }
 
 interface PlayerActions {
@@ -20,6 +23,8 @@ interface PlayerActions {
   addXP: (amount: number) => void
   loseLife: () => void
   healLife: () => void
+  setTheme: (theme: Theme) => void
+  completeTutorial: (tutorialId: string) => void
   reset: () => void
 }
 
@@ -33,6 +38,8 @@ const initialState: PlayerState = {
   xp: 0,
   level: 1,
   hasCompletedOpening: false,
+  theme: 'light',
+  completedTutorials: [],
 }
 
 export const usePlayerStore = create<PlayerState & PlayerActions>()(
@@ -59,6 +66,14 @@ export const usePlayerStore = create<PlayerState & PlayerActions>()(
       healLife: () =>
         set((state) => ({
           lives: Math.min(state.maxLives, state.lives + 1),
+        })),
+
+      setTheme: (theme) => set({ theme }),
+      completeTutorial: (id) =>
+        set((state) => ({
+          completedTutorials: state.completedTutorials.includes(id)
+            ? state.completedTutorials
+            : [...state.completedTutorials, id],
         })),
 
       reset: () => set({ ...initialState, hasCompletedOpening: true }),

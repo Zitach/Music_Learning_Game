@@ -1,15 +1,15 @@
-﻿import { useProgressStore } from '../../stores/progressStore'
-import { CHAPTERS } from '../../data/chapters'
+import { useProgressStore } from '../../stores/progressStore'
+import { ACHIEVEMENTS } from '../../domain/achievements/achievements'
 
 export function BadgeCounter() {
-  const badges = useProgressStore(s => s.badges)
-  const totalSkills = CHAPTERS.flatMap(c => c.skills).length
+  const achievements = useProgressStore(s => s.achievements)
+  const total = ACHIEVEMENTS.length
 
   return (
     <div className="hud-chip">
       <span style={{ fontSize: '16px' }}>🏅</span>
       <span style={{ color: 'var(--text)', fontSize: '13px', fontWeight: 700 }}>
-        {badges.length}/{totalSkills}
+        {achievements.length}/{total}
       </span>
     </div>
   )

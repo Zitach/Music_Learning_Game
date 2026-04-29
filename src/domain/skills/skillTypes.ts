@@ -7,6 +7,14 @@ export interface SkillFlowStep {
 
 export type SkillId = string
 
+export type PracticeVariant =
+  | 'note-names'
+  | 'ear-training'
+  | 'rhythm'
+  | 'staff-reading'
+  | 'scales'
+  | 'progressions'
+
 export interface SkillDefinition {
   id: SkillId
   title: string
@@ -16,6 +24,7 @@ export interface SkillDefinition {
   assessmentCount: number
   starsToPass: number
   flow: SkillFlowStep[]
+  practiceVariant?: PracticeVariant
 }
 
 export interface ChapterDefinition {

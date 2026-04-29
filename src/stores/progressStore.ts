@@ -1,7 +1,8 @@
-﻿import { create } from 'zustand'
+import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { CHAPTERS } from '../data/chapters'
 import { isChapterUnlocked as selectChapterUnlocked, isSkillUnlocked as selectSkillUnlocked } from '../domain/progress/progressSelectors'
+import type { AchievementId } from '../domain/achievements/achievementTypes'
 
 export type SkillStatus = 'locked' | 'available' | 'completed'
 
@@ -14,13 +15,15 @@ export interface SkillProgress {
 
 export interface ProgressState {
   skillProgress: Record<string, SkillProgress>
-  badges: string[]
+  achievements: AchievementId[]
+  achievementLog: Array<{ id: AchievementId; unlockedAt: string }>
 }
 
 interface ProgressActions {
   unlockSkill: (skillId: string) => void
   completeSkill: (skillId: string, stars: number) => void
   incrementPractice: (skillId: string) => void
+  unlockAchievement: (id: AchievementId) => void
   isChapterUnlocked: (chapterId: string) => boolean
   isSkillUnlocked: (skillId: string) => boolean
   reset: () => void
@@ -44,7 +47,8 @@ export function buildInitialProgress(): Record<string, SkillProgress> {
 
 const initialState: ProgressState = {
   skillProgress: buildInitialProgress(),
-  badges: [],
+  achievements: [],
+  achievementLog: [],
 }
 
 export const useProgressStore = create<ProgressState & ProgressActions>()(
@@ -64,13 +68,11 @@ export const useProgressStore = create<ProgressState & ProgressActions>()(
       completeSkill: (skillId, stars) =>
         set((state) => {
           const current = state.skillProgress[skillId]
-          const badges = state.badges.includes(skillId) ? state.badges : [...state.badges, skillId]
           return {
             skillProgress: {
               ...state.skillProgress,
               [skillId]: { ...current, status: 'completed', stars: Math.max(current.stars, stars) },
             },
-            badges,
           }
         }),
       incrementPractice: (skillId) =>
@@ -84,9 +86,17 @@ export const useProgressStore = create<ProgressState & ProgressActions>()(
             },
           },
         })),
+      unlockAchievement: (id) =>
+        set((state) => {
+          if (state.achievements.includes(id)) return state
+          return {
+            achievements: [...state.achievements, id],
+            achievementLog: [...state.achievementLog, { id, unlockedAt: new Date().toISOString() }],
+          }
+        }),
       isChapterUnlocked: (chapterId) => selectChapterUnlocked(CHAPTERS, get().skillProgress, chapterId),
       isSkillUnlocked: (skillId) => selectSkillUnlocked(CHAPTERS, get().skillProgress, skillId),
-      reset: () => set({ skillProgress: buildInitialProgress(), badges: [] }),
+      reset: () => set({ skillProgress: buildInitialProgress(), achievements: [], achievementLog: [] }),
     }),
     {
       name: 'music-quest-progress',

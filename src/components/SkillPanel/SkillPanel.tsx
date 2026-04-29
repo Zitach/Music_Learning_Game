@@ -3,8 +3,13 @@ import { CHAPTERS } from '../../data/chapters'
 import { useProgressStore } from '../../stores/progressStore'
 import { getCompletedSkills } from '../../domain/progress/progressSelectors'
 import { LearnView } from './LearnView'
-import { PracticeView } from './PracticeView'
 import { AssessView } from './AssessView'
+import { NoteNamesPractice } from './practiceVariants/NoteNamesPractice'
+import { EarTrainingPractice } from './practiceVariants/EarTrainingPractice'
+import { RhythmPractice } from './practiceVariants/RhythmPractice'
+import { StaffReadingPractice } from './practiceVariants/StaffReadingPractice'
+import { ScalesPractice } from './practiceVariants/ScalesPractice'
+import { ProgressionsPractice } from './practiceVariants/ProgressionsPractice'
 
 type SkillPhase = 'list' | 'step'
 
@@ -28,6 +33,26 @@ export function SkillPanel({ chapterId, onBack }: SkillPanelProps) {
     setPhase('step')
   }
 
+  function renderPracticeVariant(skill: typeof chapter.skills[0]) {
+    const variant = skill.practiceVariant ?? 'note-names'
+    switch (variant) {
+      case 'note-names':
+        return <NoteNamesPractice skill={skill} onComplete={handleStepComplete} />
+      case 'ear-training':
+        return <EarTrainingPractice skill={skill} onComplete={handleStepComplete} />
+      case 'rhythm':
+        return <RhythmPractice skill={skill} onComplete={handleStepComplete} />
+      case 'staff-reading':
+        return <StaffReadingPractice skill={skill} onComplete={handleStepComplete} />
+      case 'scales':
+        return <ScalesPractice skill={skill} onComplete={handleStepComplete} />
+      case 'progressions':
+        return <ProgressionsPractice skill={skill} onComplete={handleStepComplete} />
+      default:
+        return <NoteNamesPractice skill={skill} onComplete={handleStepComplete} />
+    }
+  }
+
   const handleStepComplete = () => {
     const skill = chapter.skills.find(item => item.id === currentSkillId)
     if (!skill) return
@@ -44,7 +69,7 @@ export function SkillPanel({ chapterId, onBack }: SkillPanelProps) {
     const skill = chapter.skills.find(item => item.id === currentSkillId)!
     const step = skill.flow[stepIndex]
     if (step.type === 'learn') return <LearnView skill={skill} onComplete={handleStepComplete} />
-    if (step.type === 'practice') return <PracticeView skill={skill} onComplete={handleStepComplete} />
+    if (step.type === 'practice') return renderPracticeVariant(skill)
     return <AssessView skill={skill} onComplete={handleStepComplete} />
   }
 
@@ -60,7 +85,7 @@ export function SkillPanel({ chapterId, onBack }: SkillPanelProps) {
           <h1>{chapter.emoji} {chapter.title}</h1>
           <p>沿着课程路径逐步推进，完成每个技能节点，继续深入这一章节。</p>
         </div>
-        <div className="chapter-progress-summary"><span>已完成 {completedSkills}/{chapter.skills.length}</span></div>
+        <div className="chapter-progress-summary"><span role="progressbar" aria-valuenow={completedSkills} aria-valuemin={0} aria-valuemax={chapter.skills.length}>已完成 {completedSkills}/{chapter.skills.length}</span></div>
       </header>
       <section className="chapter-grid">
         <div className="chapter-intro floating-panel">

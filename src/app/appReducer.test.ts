@@ -2,11 +2,13 @@
 import { appReducer, createInitialAppUiState } from './appReducer'
 
 describe('appReducer', () => {
-  test('moves from audio gate through opening to map', () => {
+  test('moves from audio gate through opening demo to map', () => {
     let state = createInitialAppUiState(false)
     state = appReducer(state, { type: 'audioGateDismissed' })
     expect(state.screen).toBe('opening-title')
     state = appReducer(state, { type: 'startOpening' })
+    expect(state.screen).toBe('opening-demo')
+    state = appReducer(state, { type: 'demoDone' })
     expect(state.screen).toBe('opening-instrument')
     state = appReducer(state, { type: 'selectInstrumentDone' })
     expect(state.screen).toBe('opening-nickname')

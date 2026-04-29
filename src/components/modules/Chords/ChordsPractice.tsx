@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useGameStore } from '../../../lib/stores/gameStore'
+import { audioEngine } from '../../../lib/audio/Engine'
 
 const CHORDS = [
   { name: 'Major', intervals: [0, 4, 7] },
@@ -14,10 +15,6 @@ const CHORDS = [
 
 const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 
-// Base frequency for A4 = 440Hz
-const A4_FREQUENCY = 440
-const A4_INDEX = 9 // A is index 9 in NOTE_NAMES
-
 interface ChordsPracticeProps {
   onComplete: () => void
 }
@@ -28,6 +25,11 @@ export function ChordsPractice({ onComplete: _onComplete }: ChordsPracticeProps)
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null)
   const [hasPlayed, setHasPlayed] = useState(false)
   const { recordHit, recordMiss } = useGameStore()
+
+  // Ensure audio engine is loaded
+  useEffect(() => {
+    audioEngine.load()
+  }, [])
 
   // Generate new chord question
   const generateQuestion = useCallback(() => {
@@ -43,76 +45,19 @@ export function ChordsPractice({ onComplete: _onComplete }: ChordsPracticeProps)
     generateQuestion()
   }, [generateQuestion])
 
-  // Calculate frequency for a note
-  const getFrequency = (noteName: string, octave: number = 4): number => {
-    const noteIndex = NOTE_NAMES.indexOf(noteName)
-    const semitonesFromA4 = (octave - 4) * 12 + (noteIndex - A4_INDEX)
-    return A4_FREQUENCY * Math.pow(2, semitonesFromA4 / 12)
-  }
-
-  // Generate simple sine wave tone as base64 WAV
-  const generateTone = (frequency: number, duration: number = 0.5): string => {
-    const sampleRate = 44100
-    const samples = Math.floor(sampleRate * duration)
-    const buffer = new ArrayBuffer(44 + samples * 2)
-    const view = new DataView(buffer)
-
-    // WAV header
-    const writeString = (offset: number, str: string) => {
-      for (let i = 0; i < str.length; i++) {
-        view.setUint8(offset + i, str.charCodeAt(i))
-      }
-    }
-
-    writeString(0, 'RIFF')
-    view.setUint32(4, 36 + samples * 2, true)
-    writeString(8, 'WAVE')
-    writeString(12, 'fmt ')
-    view.setUint32(16, 16, true)
-    view.setUint16(20, 1, true)
-    view.setUint16(22, 1, true)
-    view.setUint32(24, sampleRate, true)
-    view.setUint32(28, sampleRate * 2, true)
-    view.setUint16(32, 2, true)
-    view.setUint16(34, 16, true)
-    writeString(36, 'data')
-    view.setUint32(40, samples * 2, true)
-
-    // Generate sine wave
-    for (let i = 0; i < samples; i++) {
-      const t = i / sampleRate
-      const envelope = Math.min(1, Math.min(t * 100, (duration - t) * 20))
-      const sample = Math.sin(2 * Math.PI * frequency * t) * envelope * 0.5
-      view.setInt16(44 + i * 2, sample * 32767, true)
-    }
-
-    // Convert to base64
-    const bytes = new Uint8Array(buffer)
-    let binary = ''
-    for (let i = 0; i < bytes.length; i++) {
-      binary += String.fromCharCode(bytes[i])
-    }
-    return btoa(binary)
-  }
-
-  // Play chord (all notes simultaneously)
+  // Play chord using Tone.js polyphonic synth
   const playChord = () => {
     if (!targetChord || !rootNote) return
     const rootIndex = NOTE_NAMES.indexOf(rootNote)
-    
-    targetChord.intervals.forEach((interval, idx) => {
+
+    const notes = targetChord.intervals.map(interval => {
       const noteIndex = (rootIndex + interval) % 12
       const noteName = NOTE_NAMES[noteIndex]
       const octave = rootIndex + interval >= 12 ? 5 : 4
-      const frequency = getFrequency(noteName, octave)
-      
-      // Stagger slightly for better separation
-      setTimeout(() => {
-        const audio = new Audio()
-        audio.src = `data:audio/wav;base64,${generateTone(frequency, 0.8)}`
-        audio.play()
-      }, idx * 50)
+      return noteName + octave
     })
+
+    audioEngine.playChord(notes, '2n')
     setHasPlayed(true)
   }
 

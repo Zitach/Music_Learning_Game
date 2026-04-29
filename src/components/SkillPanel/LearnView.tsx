@@ -43,7 +43,7 @@ export function LearnView({ skill, onComplete }: LearnViewProps) {
         </div>
 
         <div className="lesson-main">
-          <section className="lesson-card">
+          <section className="lesson-card" key={step}>
             <p className="lesson-kicker">知识要点</p>
             <p className="lesson-copy">{currentStep.text}</p>
           </section>

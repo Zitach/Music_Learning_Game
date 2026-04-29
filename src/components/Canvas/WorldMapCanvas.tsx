@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback } from 'react'
 import { WorldMapRenderer } from '../../lib/canvas/WorldMapRenderer'
 import { MAP_WIDTH, MAP_HEIGHT } from '../../lib/canvas/WorldMapData'
 import { useProgressStore } from '../../stores/progressStore'
@@ -12,15 +12,30 @@ export interface WorldMapCanvasProps {
 export function WorldMapCanvas({ onChapterClick }: WorldMapCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rendererRef = useRef<WorldMapRenderer | null>(null)
+  const rafRef = useRef(0)
   const scaleRef = useRef(1)
   const dprRef = useRef(1)
   const skillProgress = useProgressStore(s => s.skillProgress)
-  const completedChapters = new Set(CHAPTERS.filter(c => c.skills.every(s => skillProgress[s.id]?.status === 'completed')).map(c => c.id))
+  const completedChapters = new Set(
+    CHAPTERS.filter(c => c.skills.every(s => skillProgress[s.id]?.status === 'completed')).map(c => c.id)
+  )
   const availableChapterId = CHAPTERS.find(c => !completedChapters.has(c.id))?.id ?? null
+
+  const chapterProgress = new Map(
+    CHAPTERS.map(c => {
+      const total = c.skills.length
+      const completed = c.skills.filter(s => skillProgress[s.id]?.status === 'completed').length
+      return [c.id, { completedSkills: completed, totalSkills: total }]
+    })
+  )
 
   useEffect(() => {
     const updateScale = () => {
-      scaleRef.current = Math.min((window.innerWidth * 0.92) / MAP_WIDTH, (window.innerHeight * 0.84) / MAP_HEIGHT, 1.28)
+      scaleRef.current = Math.min(
+        (window.innerWidth * 0.92) / MAP_WIDTH,
+        (window.innerHeight * 0.84) / MAP_HEIGHT,
+        1.28
+      )
       dprRef.current = window.devicePixelRatio || 1
     }
     updateScale()
@@ -40,10 +55,20 @@ export function WorldMapCanvas({ onChapterClick }: WorldMapCanvasProps) {
     if (!ctx) return
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     const renderer = new WorldMapRenderer(ctx)
-    renderer.setProgress(completedChapters, availableChapterId)
-    renderer.draw()
+    renderer.setProgress(completedChapters, availableChapterId, chapterProgress)
+    renderer.startAnimation()
     rendererRef.current = renderer
-  }, [availableChapterId, skillProgress, completedChapters])
+
+    const loop = (timestamp: number) => {
+      renderer.animate(timestamp)
+      rafRef.current = requestAnimationFrame(loop)
+    }
+    rafRef.current = requestAnimationFrame(loop)
+
+    return () => {
+      cancelAnimationFrame(rafRef.current)
+    }
+  }, [availableChapterId, skillProgress, completedChapters, chapterProgress])
 
   const handleClick = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
     if (!canvasRef.current || !rendererRef.current) return
@@ -56,9 +81,25 @@ export function WorldMapCanvas({ onChapterClick }: WorldMapCanvasProps) {
 
   return (
     <div className="world-map-wrap">
-      <canvas ref={canvasRef} onClick={handleClick} aria-hidden="true" className="world-map-canvas" />
+      <canvas
+        ref={canvasRef}
+        onClick={handleClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            // Select first available chapter on Enter/Space
+            const ch = CHAPTERS.find(c => rendererRef.current?.getChapterAtPosition(
+              c.position.x * MAP_WIDTH, c.position.y * MAP_HEIGHT
+            ) === c.id)
+            if (ch) onChapterClick(ch.id)
+          }
+        }}
+        tabIndex={0}
+        role="img"
+        aria-label="音乐学习世界地图。共7个章节，点击节点进入学习。"
+        className="world-map-canvas"
+      />
       <ChapterListOverlay onChapterClick={onChapterClick} />
     </div>
   )
 }
-

@@ -1,4 +1,4 @@
-﻿.opening-screen {
+.opening-screen {
   display: grid;
   place-items: center;
   padding: 32px;
@@ -9,7 +9,7 @@
   position: relative;
   z-index: 1;
   border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(18, 31, 56, 0.78), rgba(7, 13, 24, 0.72));
+  background: var(--panel);
   box-shadow: var(--shadow);
   backdrop-filter: blur(22px);
 }
@@ -27,8 +27,8 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(120deg, rgba(255, 255, 255, 0.06), transparent 36%),
-    radial-gradient(circle at top right, rgba(248, 210, 122, 0.18), transparent 28%);
+    linear-gradient(120deg, rgba(139, 92, 246, 0.04), transparent 36%),
+    radial-gradient(circle at top right, rgba(139, 92, 246, 0.08), transparent 28%);
   pointer-events: none;
 }
 
@@ -42,7 +42,7 @@
 
 .staff-lines span {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(248, 210, 122, 0.78), transparent);
+  background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
 }
 
 .hero-grid {
@@ -61,9 +61,9 @@
   gap: 10px;
   padding: 8px 14px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--gold);
+  background: rgba(107, 78, 230, 0.08);
+  border: 1px solid var(--line);
+  color: var(--primary);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-size: 12px;
@@ -78,8 +78,8 @@
 
 .hero-title .accent {
   display: block;
-  color: var(--gold);
-  text-shadow: 0 0 28px rgba(248, 210, 122, 0.24);
+  color: var(--primary);
+  text-shadow: 0 0 28px rgba(107, 78, 230, 0.18);
 }
 
 .hero-copy,
@@ -122,18 +122,18 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.08);
-  color: var(--gold);
+  background: rgba(107, 78, 230, 0.10);
+  color: var(--primary);
 }
 
 .hero-visual {
   position: relative;
   min-height: 420px;
   border-radius: 32px;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--line);
   background:
-    radial-gradient(circle at top, rgba(255,255,255,0.06), transparent 48%),
-    linear-gradient(180deg, rgba(255,255,255,0.04), rgba(8, 16, 30, 0.55));
+    radial-gradient(circle at top, rgba(139, 92, 246, 0.06), transparent 48%),
+    var(--bg-1);
   overflow: hidden;
 }
 
@@ -151,14 +151,14 @@
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background:
-    radial-gradient(circle at center, rgba(248,210,122,0.2) 0 14%, rgba(12,21,38,0.96) 14% 42%, rgba(255,255,255,0.05) 43% 50%, rgba(9,17,30,0.95) 51% 100%);
-  box-shadow: 0 26px 40px rgba(0,0,0,0.28);
+    radial-gradient(circle at center, rgba(139,92,246,0.2) 0 14%, rgba(107,78,230,0.08) 14% 42%, rgba(139,92,246,0.05) 43% 50%, rgba(107,78,230,0.06) 51% 100%);
+  box-shadow: 0 26px 40px rgba(0,0,0,0.10);
   animation: spinSlow 18s linear infinite;
 }
 
 .note-trail {
   font-size: 34px;
-  color: rgba(255,255,255,0.72);
+  color: var(--muted);
   animation: floatNote 4.6s ease-in-out infinite;
 }
 
@@ -168,8 +168,8 @@
   min-width: 150px;
   padding: 14px 16px;
   border-radius: 18px;
-  background: rgba(8, 16, 30, 0.58);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: var(--panel);
+  border: 1px solid var(--line);
   backdrop-filter: blur(16px);
 }
 
@@ -200,8 +200,8 @@
 .choice-card {
   padding: 24px 22px;
   border-radius: 24px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--line);
+  background: var(--panel);
   color: var(--text);
   text-align: left;
   cursor: pointer;
@@ -210,9 +210,9 @@
 .choice-card:hover,
 .choice-card.is-selected {
   transform: translateY(-4px);
-  border-color: rgba(248,210,122,0.38);
-  background: rgba(248,210,122,0.08);
-  box-shadow: 0 18px 36px rgba(0,0,0,0.18);
+  border-color: var(--primary-light);
+  background: rgba(107, 78, 230, 0.08);
+  box-shadow: var(--shadow);
 }
 
 .choice-emoji {
@@ -235,19 +235,19 @@
   width: min(520px, 100%);
   padding: 18px 22px;
   border-radius: 22px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--line);
+  background: var(--panel);
   color: var(--text);
   outline: 0;
 }
 
 .text-input:focus {
-  border-color: rgba(248,210,122,0.4);
-  box-shadow: 0 0 0 4px rgba(248,210,122,0.12);
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 4px rgba(107, 78, 230, 0.12);
 }
 
 .text-input.is-error {
-  border-color: rgba(255,143,143,0.45);
+  border-color: var(--error);
 }
 
 .helper-text,
@@ -260,7 +260,7 @@
 }
 
 .error-text {
-  color: #ffb7b7;
+  color: var(--error);
 }
 
 @media (max-width: 900px) {

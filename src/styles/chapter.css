@@ -1,4 +1,4 @@
-﻿.chapter-shell {
+.chapter-shell {
   position: relative;
   width: 100vw;
   height: 100vh;
@@ -17,8 +17,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 20% 20%, rgba(124, 224, 195, 0.08), transparent 22%),
-    radial-gradient(circle at 80% 18%, rgba(248, 210, 122, 0.1), transparent 24%);
+    radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.06), transparent 22%),
+    radial-gradient(circle at 80% 18%, rgba(139, 92, 246, 0.06), transparent 24%);
   pointer-events: none;
 }
 
@@ -49,8 +49,8 @@
 .chapter-progress-summary {
   padding: 12px 16px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--line);
+  background: rgba(107, 78, 230, 0.06);
 }
 
 .chapter-grid {
@@ -87,14 +87,14 @@
 .chapter-meter-track {
   height: 10px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.08);
+  background: var(--line);
   overflow: hidden;
 }
 
 .chapter-meter-fill {
   height: 100%;
   border-radius: inherit;
-  box-shadow: 0 0 20px rgba(255,255,255,0.12);
+  box-shadow: 0 0 20px rgba(107, 78, 230, 0.12);
 }
 
 .chapter-timeline {
@@ -145,19 +145,19 @@
   width: 58px;
   height: 58px;
   border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.05);
-  box-shadow: 0 16px 30px rgba(0,0,0,0.24);
+  border: 1px solid var(--line);
+  background: var(--panel);
+  box-shadow: var(--shadow);
 }
 
 .chapter-node.is-unlocked .chapter-node-dot,
 .chapter-node.is-complete .chapter-node-dot {
-  border-color: var(--chapter-accent, var(--gold));
+  border-color: var(--chapter-accent, var(--primary));
 }
 
 .chapter-node.is-complete .chapter-node-dot {
-  background: color-mix(in srgb, var(--chapter-accent, var(--gold)) 20%, rgba(255,255,255,0.06));
-  box-shadow: 0 16px 30px rgba(0,0,0,0.24), 0 0 0 1px color-mix(in srgb, var(--chapter-accent, var(--gold)) 26%, transparent) inset;
+  background: color-mix(in srgb, var(--chapter-accent, var(--primary)) 20%, var(--panel));
+  box-shadow: var(--shadow), 0 0 0 1px color-mix(in srgb, var(--chapter-accent, var(--primary)) 26%, transparent) inset;
 }
 
 .chapter-node-copy {
