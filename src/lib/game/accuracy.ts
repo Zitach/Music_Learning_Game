@@ -6,8 +6,8 @@ export interface AccuracyResult {
   comboBonus: number
 }
 
-const PERFECT_WINDOW_MS = 50
-const GOOD_WINDOW_MS = 100
+const PERFECT_WINDOW_MS = 100
+const GOOD_WINDOW_MS = 200
 
 const BASE_SCORE_PERFECT = 100
 const BASE_SCORE_GOOD = 50
