@@ -1,12 +1,11 @@
 import { useEffect, useRef, useCallback, useState } from 'react'
 import { getCanvasTheme } from '../../../lib/canvas/canvasTheme'
-
-export interface Note {
-  number: number
-  duration?: string
-  dotsAbove?: number
-  dotsBelow?: number
-}
+import {
+  RhythmNote,
+  getDurationWidth,
+  getCumulativeWidthOffsets,
+  isRestNote,
+} from '../../../lib/music/noteTiming'
 
 export interface TimeSignature {
   top: number
@@ -14,7 +13,7 @@ export interface TimeSignature {
 }
 
 export interface ScrollableStaffProps {
-  notes: Array<{ number: number; duration?: string }>
+  notes: RhythmNote[]
   bpm?: number
   isPlaying?: boolean
   onNoteComplete?: (index: number) => void
@@ -38,23 +37,34 @@ export function ScrollableStaff({
   width = 600,
   height = 120,
 }: ScrollableStaffProps) {
-  const [currentNoteIndex, setCurrentNoteIndex] = useState<number>(-1)
   const [offset, setOffset] = useState(0)
   const animationRef = useRef<number | null>(null)
   const lastTimeRef = useRef<number | null>(null)
   const completedNotesRef = useRef<Set<number>>(new Set())
   const isPlayingRef = useRef(isPlaying)
-  
-  // Keep ref in sync with prop
+  const currentNoteIndexRef = useRef<number>(-1)
+  const widthOffsetsRef = useRef<number[]>([])
+  const totalContentWidthRef = useRef<number>(0)
+
   isPlayingRef.current = isPlaying
 
-  // Calculate pixels per millisecond based on BPM
-  // At 120 BPM: 1 beat = 500ms, notes spaced by NOTE_WIDTH
-  // Speed = NOTE_WIDTH / beatDuration pixels per ms
+  useEffect(() => {
+    const offsets = getCumulativeWidthOffsets(notes, NOTE_WIDTH)
+    widthOffsetsRef.current = offsets
+    const lastNoteWidth = notes.length > 0
+      ? getDurationWidth(notes[notes.length - 1].duration, NOTE_WIDTH)
+      : 0
+    totalContentWidthRef.current =
+      (offsets[offsets.length - 1] ?? 0) + lastNoteWidth + STAVE_PADDING * 2
+    setOffset(0)
+    currentNoteIndexRef.current = -1
+    lastTimeRef.current = null
+    completedNotesRef.current = new Set()
+  }, [notes])
+
   const beatDuration = 60000 / bpm
   const pixelsPerMs = NOTE_WIDTH / beatDuration
 
-  // Calculate the center position where current note is highlighted
   const notesStartX = timeSignature ? STAVE_PADDING + 30 : STAVE_PADDING
   const centerPosition = notesStartX + NOTE_WIDTH / 2
 
@@ -67,56 +77,54 @@ export function ScrollableStaff({
       const deltaTime = timestamp - lastTimeRef.current
       lastTimeRef.current = timestamp
 
-      // Move notes from right to left
       setOffset((prevOffset) => {
         const newOffset = prevOffset + pixelsPerMs * deltaTime
-        
-        // Calculate which note should now be at center position
-        // offset tells us how much the notes have scrolled
-        // When offset reaches note.position - centerPosition, that's the current note
-        
-        // Find the note index at center position
-        const noteIndexAtCenter = Math.round((newOffset + centerPosition - notesStartX) / NOTE_WIDTH)
-        
-        // Update current note if it changed
+        const widthOffsets = widthOffsetsRef.current
+
+        let noteIndexAtCenter = -1
+        for (let i = 0; i < widthOffsets.length; i++) {
+          const noteCenterX = notesStartX + widthOffsets[i] + NOTE_WIDTH / 2
+          if (newOffset + centerPosition >= noteCenterX - NOTE_WIDTH / 2) {
+            noteIndexAtCenter = i
+          }
+        }
+
+        if (noteIndexAtCenter >= notes.length) {
+          if (animationRef.current !== null) {
+            cancelAnimationFrame(animationRef.current)
+            animationRef.current = null
+          }
+          return newOffset
+        }
+
         if (noteIndexAtCenter >= 0 && noteIndexAtCenter < notes.length) {
           const noteIndex = noteIndexAtCenter
-          
-          // Check if we've passed this note (it's to the left of center)
-          const notePositionAtCenter = notesStartX + noteIndex * NOTE_WIDTH
+
+          const notePositionAtCenter = notesStartX + widthOffsets[noteIndex]
           const distanceFromCenter = newOffset - (notePositionAtCenter - centerPosition)
-          
-          // When note passes center (offset increases past threshold), trigger completion
+
           const completionThreshold = NOTE_WIDTH / 2
-          
+
           if (distanceFromCenter > completionThreshold && !completedNotesRef.current.has(noteIndex)) {
             completedNotesRef.current.add(noteIndex)
             onNoteComplete?.(noteIndex)
           }
-          
-          // Update current note highlight
-          if (noteIndex !== currentNoteIndex) {
-            setCurrentNoteIndex(noteIndex)
+
+          if (noteIndex !== currentNoteIndexRef.current) {
+            currentNoteIndexRef.current = noteIndex
           }
         }
-        
+
         return newOffset
       })
 
-      animationRef.current = requestAnimationFrame(animate)
+      if (isPlayingRef.current) {
+        animationRef.current = requestAnimationFrame(animate)
+      }
     },
-    [bpm, notes.length, centerPosition, notesStartX, onNoteComplete, currentNoteIndex, pixelsPerMs]
+    [bpm, notes.length, centerPosition, notesStartX, onNoteComplete, pixelsPerMs]
   )
 
-  // Reset animation state when notes change
-  useEffect(() => {
-    setCurrentNoteIndex(-1)
-    setOffset(0)
-    lastTimeRef.current = null
-    completedNotesRef.current = new Set()
-  }, [notes])
-
-  // Start/stop animation based on isPlaying
   useEffect(() => {
     if (isPlaying) {
       lastTimeRef.current = null
@@ -136,16 +144,23 @@ export function ScrollableStaff({
     }
   }, [isPlaying, animate])
 
-  // Calculate current note index for display
   const displayCurrentNoteIndex = (() => {
-    if (!isPlaying && currentNoteIndex === -1) return -1
-    // Find which note is at the center position
-    const centerNoteIndex = Math.round((offset + centerPosition - notesStartX) / NOTE_WIDTH)
+    if (!isPlaying && currentNoteIndexRef.current === -1) return -1
+    const widthOffsets = widthOffsetsRef.current
+    let centerNoteIndex = -1
+    for (let i = 0; i < widthOffsets.length; i++) {
+      const noteCenterX = notesStartX + widthOffsets[i] + NOTE_WIDTH / 2
+      if (offset + centerPosition >= noteCenterX - NOTE_WIDTH / 2) {
+        centerNoteIndex = i
+      }
+    }
     if (centerNoteIndex >= 0 && centerNoteIndex < notes.length) {
       return centerNoteIndex
     }
     return -1
   })()
+
+  const totalContentWidth = totalContentWidthRef.current || width + NOTE_WIDTH * 2
 
   return (
     <div
@@ -174,7 +189,7 @@ export function ScrollableStaff({
           pointerEvents: 'none',
         }}
       />
-      
+
       {/* Canvas for staff and notes */}
       <div
         style={{
@@ -182,14 +197,14 @@ export function ScrollableStaff({
           left: 0,
           top: 0,
           transform: `translateX(${-offset}px)`,
-          width: `${width + offset + NOTE_WIDTH * 2}px`,
+          width: `${totalContentWidth}px`,
         }}
       >
         <CanvasWithOffset
           notes={notes}
           currentNoteIndex={displayCurrentNoteIndex >= 0 ? displayCurrentNoteIndex : undefined}
           timeSignature={timeSignature}
-          width={width + offset + NOTE_WIDTH * 2}
+          width={totalContentWidth}
           height={height}
           offset={offset}
         />
@@ -200,7 +215,7 @@ export function ScrollableStaff({
 
 // Separate canvas component that handles offset rendering
 interface CanvasWithOffsetProps {
-  notes: Note[]
+  notes: RhythmNote[]
   currentNoteIndex?: number
   timeSignature?: TimeSignature
   width: number
@@ -217,6 +232,11 @@ function CanvasWithOffset({
   offset,
 }: CanvasWithOffsetProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const widthOffsetsRef = useRef<number[]>([])
+
+  useEffect(() => {
+    widthOffsetsRef.current = getCumulativeWidthOffsets(notes, NOTE_WIDTH)
+  }, [notes])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -243,15 +263,14 @@ function CanvasWithOffset({
     // Clear canvas
     ctx.clearRect(0, 0, width, height)
 
-    // Draw 5 horizontal staff lines
     ctx.strokeStyle = theme.staffLine
     ctx.lineWidth = 1
 
     for (let i = 0; i < STAFF_LINE_COUNT; i++) {
       const y = staffTop + i * LINE_SPACING
       ctx.beginPath()
-      ctx.moveTo(STAVE_PADDING, y)
-      ctx.lineTo(width - STAVE_PADDING, y)
+      ctx.moveTo(0, y)
+      ctx.lineTo(width, y)
       ctx.stroke()
     }
 
@@ -279,64 +298,114 @@ function CanvasWithOffset({
     const DOT_GAP = 6
     const DOT_OFFSET_Y = 8
     const NUMBER_FONT_SIZE = 20
+    const DURATION_INDICATOR_Y_OFFSET = 18
+
+    const widthOffsets = widthOffsetsRef.current
 
     // Draw notes
     notes.forEach((note, index) => {
-      const noteX = notesStartX + index * NOTE_WIDTH
+      const noteX = notesStartX + (widthOffsets[index] ?? 0)
       const isCurrentNote = index === currentNoteIndex
+      const isRest = isRestNote(note)
 
       const notePositionOffset = NOTE_POSITIONS[note.number] ?? 0
       const noteY = middleLineY - notePositionOffset * LINE_SPACING
 
-      // Draw dots above
-      if (note.dotsAbove && note.dotsAbove > 0) {
-        for (let i = 0; i < note.dotsAbove; i++) {
-          const dotY = noteY - DOT_OFFSET_Y - i * DOT_GAP * 2
-          const dotX = noteX + NUMBER_FONT_SIZE / 2 + DOT_GAP
-
-          ctx.beginPath()
-          ctx.arc(dotX, dotY, DOT_RADIUS, 0, Math.PI * 2)
-          ctx.fillStyle = isCurrentNote ? theme.text : theme.textMuted
-          ctx.fill()
-        }
-      }
-
-      // Draw dots below
-      if (note.dotsBelow && note.dotsBelow > 0) {
-        for (let i = 0; i < note.dotsBelow; i++) {
-          const dotY = noteY + DOT_OFFSET_Y + i * DOT_GAP * 2
-          const dotX = noteX + NUMBER_FONT_SIZE / 2 + DOT_GAP
-
-          ctx.beginPath()
-          ctx.arc(dotX, dotY, DOT_RADIUS, 0, Math.PI * 2)
-          ctx.fillStyle = isCurrentNote ? theme.text : theme.textMuted
-          ctx.fill()
-        }
-      }
-
-      ctx.font = `bold ${NUMBER_FONT_SIZE}px system-ui, sans-serif`
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-
-      // Highlight current note
-      if (isCurrentNote) {
-        const bgPadding = 4
-        ctx.fillStyle = theme.warning
-        ctx.beginPath()
-        ctx.roundRect(
-          noteX - NUMBER_FONT_SIZE / 2 - bgPadding,
-          noteY - NUMBER_FONT_SIZE / 2 - bgPadding,
-          NUMBER_FONT_SIZE + bgPadding * 2,
-          NUMBER_FONT_SIZE + bgPadding * 2,
-          4
-        )
-        ctx.fill()
-        ctx.fillStyle = theme.text
+      if (isRest) {
+        ctx.font = `bold ${NUMBER_FONT_SIZE}px system-ui, sans-serif`
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.fillStyle = isCurrentNote ? theme.text : theme.textMuted
+        ctx.fillText('休', noteX, noteY)
       } else {
-        ctx.fillStyle = theme.textMuted
+        // Draw dots above
+        if (note.dotsAbove && note.dotsAbove > 0) {
+          for (let i = 0; i < note.dotsAbove; i++) {
+            const dotY = noteY - DOT_OFFSET_Y - i * DOT_GAP * 2
+            const dotX = noteX + NUMBER_FONT_SIZE / 2 + DOT_GAP
+
+            ctx.beginPath()
+            ctx.arc(dotX, dotY, DOT_RADIUS, 0, Math.PI * 2)
+            ctx.fillStyle = isCurrentNote ? theme.text : theme.textMuted
+            ctx.fill()
+          }
+        }
+
+        // Draw dots below
+        if (note.dotsBelow && note.dotsBelow > 0) {
+          for (let i = 0; i < note.dotsBelow; i++) {
+            const dotY = noteY + DOT_OFFSET_Y + i * DOT_GAP * 2
+            const dotX = noteX + NUMBER_FONT_SIZE / 2 + DOT_GAP
+
+            ctx.beginPath()
+            ctx.arc(dotX, dotY, DOT_RADIUS, 0, Math.PI * 2)
+            ctx.fillStyle = isCurrentNote ? theme.text : theme.textMuted
+            ctx.fill()
+          }
+        }
+
+        ctx.font = `bold ${NUMBER_FONT_SIZE}px system-ui, sans-serif`
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+
+        // Highlight current note
+        if (isCurrentNote) {
+          const bgPadding = 4
+          ctx.fillStyle = theme.warning
+          ctx.beginPath()
+          ctx.roundRect(
+            noteX - NUMBER_FONT_SIZE / 2 - bgPadding,
+            noteY - NUMBER_FONT_SIZE / 2 - bgPadding,
+            NUMBER_FONT_SIZE + bgPadding * 2,
+            NUMBER_FONT_SIZE + bgPadding * 2,
+            4
+          )
+          ctx.fill()
+          ctx.fillStyle = theme.text
+        } else {
+          ctx.fillStyle = theme.textMuted
+        }
+
+        ctx.fillText(note.number.toString(), noteX, noteY)
       }
 
-      ctx.fillText(note.number.toString(), noteX, noteY)
+      const durationY = noteY + DURATION_INDICATOR_Y_OFFSET
+      ctx.fillStyle = isCurrentNote ? theme.text : theme.textMuted
+      ctx.strokeStyle = isCurrentNote ? theme.text : theme.textMuted
+      ctx.lineWidth = 1.5
+
+      switch (note.duration) {
+        case 'quarter': {
+          ctx.beginPath()
+          ctx.arc(noteX, durationY, 3, 0, Math.PI * 2)
+          ctx.fill()
+          break
+        }
+        case 'half': {
+          ctx.beginPath()
+          ctx.arc(noteX, durationY, 3, 0, Math.PI * 2)
+          ctx.stroke()
+          break
+        }
+        case 'whole': {
+          const rectW = 14
+          const rectH = 6
+          ctx.beginPath()
+          ctx.roundRect(noteX - rectW / 2, durationY - rectH / 2, rectW, rectH, 2)
+          ctx.stroke()
+          break
+        }
+        case 'eighth': {
+          ctx.beginPath()
+          ctx.arc(noteX, durationY, 3, 0, Math.PI * 2)
+          ctx.fill()
+          ctx.beginPath()
+          ctx.moveTo(noteX + 3, durationY)
+          ctx.lineTo(noteX + 10, durationY)
+          ctx.stroke()
+          break
+        }
+      }
     })
   }, [notes, currentNoteIndex, timeSignature, width, height, offset])
 

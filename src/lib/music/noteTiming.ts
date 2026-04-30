@@ -4,6 +4,8 @@ export interface RhythmNote {
   number: number
   duration: NoteDuration
   isRest?: boolean
+  dotsAbove?: number
+  dotsBelow?: number
 }
 
 export function getDurationBeats(duration: NoteDuration): number {

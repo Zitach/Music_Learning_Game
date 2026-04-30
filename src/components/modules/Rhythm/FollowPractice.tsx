@@ -1,11 +1,20 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
-import { ScrollableStaff } from './ScrollableStaff'
+import { ScrollableStaff, type TimeSignature } from './ScrollableStaff'
 import { judgeAccuracy, calculateScore, AccuracyLevel } from '../../../lib/game/accuracy'
 import { getBeatInterval } from '../../../lib/music/rhythmInput'
+import {
+  type RhythmNote,
+  getCurrentNoteIndex,
+  getExpectedNoteTimeMs,
+  getCumulativeBeatOffsets,
+  isRestNote,
+  getPlayableNoteIndices,
+} from '../../../lib/music/noteTiming'
 
 export interface FollowPracticeProps {
-  notes: Array<{ number: number; duration?: string }>
+  notes: RhythmNote[]
   bpm?: number
+  timeSignature?: TimeSignature
   onComplete?: (score: number, accuracy: number) => void
 }
 
@@ -17,72 +26,125 @@ interface NoteFeedback {
 
 const FEEDBACK_DISPLAY_DURATION = 800
 
-export function FollowPractice({ notes, bpm = 120, onComplete }: FollowPracticeProps) {
+export function FollowPractice({ notes, bpm = 120, timeSignature, onComplete }: FollowPracticeProps) {
   const [isPlaying, setIsPlaying] = useState(false)
-  const [currentNoteIndex, setCurrentNoteIndex] = useState(-1)
   const [feedback, setFeedback] = useState<NoteFeedback | null>(null)
   const [totalScore, setTotalScore] = useState(0)
   const [combo, setCombo] = useState(0)
   const [notesCompleted, setNotesCompleted] = useState(0)
+  const [showResult, setShowResult] = useState(false)
 
   const startTimeRef = useRef<number | null>(null)
   const completedNotesRef = useRef<Set<number>>(new Set())
   const beatIntervalRef = useRef(getBeatInterval(bpm))
+  const cumulativeBeatOffsetsRef = useRef<number[]>([])
+  const playableNoteIndicesRef = useRef<number[]>([])
+  const hitQualityRef = useRef({ perfect: 0, good: 0, miss: 0 })
+  const maxComboRef = useRef(0)
+  const comboRef = useRef(0)
+  const timeoutIdsRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set())
 
   useEffect(() => {
     beatIntervalRef.current = getBeatInterval(bpm)
+    cumulativeBeatOffsetsRef.current = getCumulativeBeatOffsets(notes)
+    playableNoteIndicesRef.current = getPlayableNoteIndices(notes)
     completedNotesRef.current = new Set()
-    setCurrentNoteIndex(-1)
+    hitQualityRef.current = { perfect: 0, good: 0, miss: 0 }
+    maxComboRef.current = 0
+    comboRef.current = 0
     setFeedback(null)
     setTotalScore(0)
     setCombo(0)
     setNotesCompleted(0)
+    setShowResult(false)
   }, [notes, bpm])
 
-  const getExpectedNoteTime = useCallback((noteIndex: number): number => {
-    if (startTimeRef.current === null) {
-      startTimeRef.current = performance.now()
+  useEffect(() => {
+    const timeoutIds = timeoutIdsRef.current
+    return () => {
+      timeoutIds.forEach(id => clearTimeout(id))
+      timeoutIds.clear()
     }
-    return startTimeRef.current + noteIndex * beatIntervalRef.current
+  }, [])
+
+  const scheduleFeedbackClear = useCallback((timestamp: number) => {
+    const timeoutId = setTimeout(() => {
+      timeoutIdsRef.current.delete(timeoutId)
+      setFeedback(current => (current?.timestamp === timestamp ? null : current))
+    }, FEEDBACK_DISPLAY_DURATION)
+    timeoutIdsRef.current.add(timeoutId)
+  }, [])
+
+  const getCurrentNote = useCallback((): number => {
+    if (startTimeRef.current === null) return -1
+    const elapsed = performance.now() - startTimeRef.current
+    return getCurrentNoteIndex(elapsed, beatIntervalRef.current, cumulativeBeatOffsetsRef.current)
+  }, [])
+
+  const getExpectedNoteTime = useCallback((noteIndex: number): number => {
+    if (startTimeRef.current === null) return -1
+    const elapsedOffset = getExpectedNoteTimeMs(noteIndex, beatIntervalRef.current, cumulativeBeatOffsetsRef.current)
+    return startTimeRef.current + elapsedOffset
   }, [])
 
   const handleInput = useCallback(() => {
-    if (!isPlaying || currentNoteIndex < 0) return
+    if (!isPlaying) return
+
+    const currentNoteIndex = getCurrentNote()
+    if (currentNoteIndex < 0 || currentNoteIndex >= notes.length) return
     if (completedNotesRef.current.has(currentNoteIndex)) return
-    if (currentNoteIndex >= notes.length) return
+
+    if (isRestNote(notes[currentNoteIndex])) return
 
     const now = performance.now()
     const expectedTime = getExpectedNoteTime(currentNoteIndex)
+    if (expectedTime < 0) return
     const offset = now - expectedTime
     const result = judgeAccuracy(offset)
-    const score = calculateScore(result.level, combo)
+    const score = calculateScore(result.level, comboRef.current)
 
     completedNotesRef.current.add(currentNoteIndex)
     setNotesCompleted(previous => previous + 1)
     setTotalScore(previous => previous + score)
 
-    if (result.level !== 'miss') setCombo(previous => previous + 1)
-    else setCombo(0)
+    if (result.level !== 'miss') {
+      comboRef.current += 1
+      setCombo(comboRef.current)
+      if (comboRef.current > maxComboRef.current) {
+        maxComboRef.current = comboRef.current
+      }
+    } else {
+      comboRef.current = 0
+      setCombo(0)
+    }
+
+    hitQualityRef.current[result.level] += 1
 
     setFeedback({ index: currentNoteIndex, level: result.level, timestamp: now })
+    scheduleFeedbackClear(now)
+  }, [isPlaying, notes, getCurrentNote, getExpectedNoteTime, scheduleFeedbackClear])
 
-    setTimeout(() => {
-      setFeedback(current => (current?.timestamp === now ? null : current))
-    }, FEEDBACK_DISPLAY_DURATION)
-  }, [isPlaying, currentNoteIndex, notes.length, combo, getExpectedNoteTime])
 
   const handleNoteComplete = useCallback((index: number) => {
     if (completedNotesRef.current.has(index)) return
+    if (index < 0 || index >= notes.length) return
 
     completedNotesRef.current.add(index)
-    setNotesCompleted(previous => previous + 1)
-    setCombo(0)
-    setFeedback({ index, level: 'miss', timestamp: performance.now() })
 
-    setTimeout(() => {
-      setFeedback(current => (current?.index === index ? null : current))
-    }, FEEDBACK_DISPLAY_DURATION)
-  }, [])
+    if (isRestNote(notes[index])) {
+      setNotesCompleted(previous => previous + 1)
+      return
+    }
+
+    comboRef.current = 0
+    setCombo(0)
+    hitQualityRef.current.miss += 1
+
+    const now = performance.now()
+    setFeedback({ index, level: 'miss', timestamp: now })
+    scheduleFeedbackClear(now)
+    setNotesCompleted(previous => previous + 1)
+  }, [notes, scheduleFeedbackClear])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -98,23 +160,36 @@ export function FollowPractice({ notes, bpm = 120, onComplete }: FollowPracticeP
 
   useEffect(() => {
     if (notesCompleted === notes.length && notes.length > 0) {
-      const accuracy = notes.length > 0 ? (notesCompleted / notes.length) * 100 : 0
-      onComplete?.(totalScore, accuracy)
+      const playableCount = playableNoteIndicesRef.current.length
+      const { perfect, good } = hitQualityRef.current
+      const accuracy = playableCount > 0 ? ((perfect + good) / playableCount) * 100 : 0
+      setShowResult(true)
       setIsPlaying(false)
+      onComplete?.(totalScore, accuracy)
     }
   }, [notesCompleted, notes.length, totalScore, onComplete])
 
   const handleStart = useCallback(() => {
     startTimeRef.current = performance.now()
     completedNotesRef.current = new Set()
-    setCurrentNoteIndex(0)
+    hitQualityRef.current = { perfect: 0, good: 0, miss: 0 }
+    maxComboRef.current = 0
+    comboRef.current = 0
+    cumulativeBeatOffsetsRef.current = getCumulativeBeatOffsets(notes)
+    playableNoteIndicesRef.current = getPlayableNoteIndices(notes)
+    setTotalScore(0)
+    setCombo(0)
+    setNotesCompleted(0)
+    setShowResult(false)
     setIsPlaying(true)
-  }, [])
+  }, [notes])
 
   const handleStop = useCallback(() => {
     setIsPlaying(false)
     startTimeRef.current = null
     completedNotesRef.current = new Set()
+    timeoutIdsRef.current.forEach(id => clearTimeout(id))
+    timeoutIdsRef.current.clear()
   }, [])
 
   const getFeedbackStyle = (level: AccuracyLevel): React.CSSProperties => {
@@ -161,6 +236,7 @@ export function FollowPractice({ notes, bpm = 120, onComplete }: FollowPracticeP
           bpm={bpm}
           isPlaying={isPlaying}
           onNoteComplete={handleNoteComplete}
+          timeSignature={timeSignature}
           width={600}
           height={120}
         />
@@ -173,8 +249,12 @@ export function FollowPractice({ notes, bpm = 120, onComplete }: FollowPracticeP
 
       <div className="module-actions-row">
         {!isPlaying ? (
-          <button onClick={handleStart} className="primary-button">
-            {notesCompleted > 0 && notesCompleted < notes.length ? '继续' : '开始'}
+          <button
+            onClick={handleStart}
+            className="primary-button"
+            disabled={notes.length === 0}
+          >
+            {showResult ? '再来一次' : notesCompleted > 0 && notesCompleted < notes.length ? '继续' : '开始'}
           </button>
         ) : (
           <button onClick={handleStop} className="secondary-button module-stop-button">

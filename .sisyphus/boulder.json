@@ -1,0 +1,32 @@
+{
+  "active_plan": "/Users/zhouquan/Desktop/Music_Learning_Game/.sisyphus/plans/ch2-rhythm-fix.md",
+  "started_at": "2026-04-30T12:05:40.903Z",
+  "session_ids": [
+    "ses_221ce0df2ffewcfCz0ncmJgLeW"
+  ],
+  "session_origins": {
+    "ses_221ce0df2ffewcfCz0ncmJgLeW": "direct"
+  },
+  "plan_name": "ch2-rhythm-fix",
+  "agent": "atlas",
+  "task_sessions": {
+    "todo:1": {
+      "task_key": "todo:1",
+      "task_label": "1",
+      "task_title": "Fix accuracy.ts judgment windows + unit tests",
+      "session_id": "ses_221b76727ffeEOML113IjKYdA2",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-04-30T12:07:11.327Z"
+    },
+    "todo:3": {
+      "task_key": "todo:3",
+      "task_label": "3",
+      "task_title": "Rewrite FollowPractice timing core",
+      "session_id": "ses_221b51228ffe5TbU7QiimLa6jy",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-04-30T12:14:54.572Z"
+    }
+  }
+}
