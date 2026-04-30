@@ -650,7 +650,7 @@ Max Concurrent: 3 (Wave 2)
   - Files: `src/components/SkillPanel/practiceVariants/RhythmPractice.tsx`
   - Pre-commit: `npm run typecheck`
 
-- [ ] 6. Add result screen to FollowPractice
+- [x] 6. Add result screen to FollowPractice
 
   **What to do**:
   In `src/components/modules/Rhythm/FollowPractice.tsx`, add a result overlay after all notes complete:
@@ -749,7 +749,7 @@ Max Concurrent: 3 (Wave 2)
   - Files: `src/components/modules/Rhythm/FollowPractice.tsx`
   - Pre-commit: `npm run typecheck`
 
-- [ ] 7. Edge cases + unmount cleanup
+- [x] 7. Edge cases + unmount cleanup
 
   **What to do**:
   Fix remaining edge cases in FollowPractice.tsx and ScrollableStaff.tsx:

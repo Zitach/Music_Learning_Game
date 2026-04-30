@@ -6,8 +6,8 @@ export interface AccuracyResult {
   comboBonus: number
 }
 
-const PERFECT_WINDOW_MS = 100
-const GOOD_WINDOW_MS = 200
+const DEFAULT_PERFECT_WINDOW_MS = 100
+const DEFAULT_GOOD_WINDOW_MS = 200
 
 const BASE_SCORE_PERFECT = 100
 const BASE_SCORE_GOOD = 50
@@ -15,10 +15,21 @@ const BASE_SCORE_MISS = 0
 
 const COMBO_BONUS_MULTIPLIER = 0.1
 
-export function judgeAccuracy(offsetMs: number): AccuracyResult {
+export function getScaledThresholds(bpm: number): { perfect: number; good: number } {
+  const beatInterval = 60000 / bpm
+  const perfect = Math.min(DEFAULT_PERFECT_WINDOW_MS, beatInterval * 0.25)
+  const good = Math.min(DEFAULT_GOOD_WINDOW_MS, beatInterval * 0.5)
+  return { perfect, good }
+}
+
+export function judgeAccuracy(offsetMs: number, bpm?: number): AccuracyResult {
   const absOffset = Math.abs(offsetMs)
 
-  if (absOffset <= PERFECT_WINDOW_MS) {
+  const thresholds = bpm !== undefined
+    ? getScaledThresholds(bpm)
+    : { perfect: DEFAULT_PERFECT_WINDOW_MS, good: DEFAULT_GOOD_WINDOW_MS }
+
+  if (absOffset <= thresholds.perfect) {
     return {
       level: 'perfect',
       score: BASE_SCORE_PERFECT,
@@ -26,7 +37,7 @@ export function judgeAccuracy(offsetMs: number): AccuracyResult {
     }
   }
 
-  if (absOffset <= GOOD_WINDOW_MS) {
+  if (absOffset <= thresholds.good) {
     return {
       level: 'good',
       score: BASE_SCORE_GOOD,

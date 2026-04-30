@@ -27,6 +27,15 @@
       "agent": "Sisyphus-Junior",
       "category": "deep",
       "updated_at": "2026-04-30T12:14:54.572Z"
+    },
+    "todo:6": {
+      "task_key": "todo:6",
+      "task_label": "6",
+      "task_title": "Add result screen to FollowPractice",
+      "session_id": "ses_221aeb3bdffekNa0N2bYLPR7jy",
+      "agent": "Sisyphus-Junior",
+      "category": "unspecified-high",
+      "updated_at": "2026-04-30T12:17:14.763Z"
     }
   }
 }
