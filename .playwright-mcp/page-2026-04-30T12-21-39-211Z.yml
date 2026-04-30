@@ -1,0 +1,9 @@
+- generic [ref=e3]:
+  - button "🌙" [ref=e4] [cursor=pointer]
+  - generic [ref=e14] [cursor=pointer]:
+    - generic [ref=e15]: 🎧
+    - generic [ref=e16]: 音频启幕
+    - heading "轻触唤醒 音乐舞台" [level=1] [ref=e17]:
+      - text: 轻触唤醒
+      - generic [ref=e18]: 音乐舞台
+    - paragraph [ref=e19]: 浏览器需要一次手势来准备音频引擎。轻触任意位置，开始你的音乐冒险。
