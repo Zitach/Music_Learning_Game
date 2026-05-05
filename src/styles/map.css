@@ -43,6 +43,19 @@
 
 .map-message {
   top: 76px;
+  animation: slideInFromTop 0.5s ease-out;
+  box-shadow: 0 0 20px color-mix(in srgb, var(--primary) 15%, transparent);
+}
+
+@keyframes slideInFromTop {
+  from {
+    transform: translateX(-50%) translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
 }
 
 .map-hint {
@@ -96,6 +109,8 @@
   font-size: 13px;
   letter-spacing: 0.08em;
   color: var(--gold);
+  background: color-mix(in srgb, var(--gold) 10%, var(--panel));
+  box-shadow: 0 0 20px color-mix(in srgb, var(--gold) 15%, transparent);
 }
 
 .map-subtitle-tag {
@@ -104,8 +119,8 @@
   top: 138px;
   padding: 9px 14px;
   border-radius: 999px;
-  color: var(--muted);
-  font-size: 14px;
+  color: var(--text);
+  font-size: 15px;
 }
 
 .map-stage {
@@ -138,6 +153,12 @@
   padding: 12px 18px;
   border-radius: 999px;
   color: var(--text);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chapter-toggle:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--primary) 20%, transparent);
 }
 
 .chapter-list-overlay {
@@ -148,7 +169,8 @@
   border-radius: 18px;
   border: 1px solid var(--line);
   background: var(--panel);
-  backdrop-filter: blur(14px);
+  backdrop-filter: blur(24px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .chapter-list-item {
@@ -160,12 +182,15 @@
   padding: 10px 12px;
   border-radius: 12px;
   border: 0;
+  border-left: 3px solid transparent;
   background: rgba(107, 78, 230, 0.04);
   color: var(--text);
+  transition: background 0.2s ease, border-left-color 0.2s ease;
 }
 
 .chapter-list-item:hover:not(:disabled) {
-  background: rgba(107, 78, 230, 0.10);
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  border-left: 3px solid var(--primary);
 }
 
 .chapter-list-item:disabled {

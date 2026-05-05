@@ -274,6 +274,21 @@ export class AudioEngine {
     }
   }
 
+  fadeOutAll(duration: number = 0.3): void {
+    if (!this.volume) return
+    this.volume.volume.cancelScheduledValues(Tone.now())
+    this.volume.volume.rampTo(-Infinity, duration)
+    setTimeout(() => {
+      if (this.volume) this.volume.volume.value = -6
+    }, duration * 1000 + 100)
+  }
+
+  resetVolume(): void {
+    if (!this.volume) return
+    this.volume.volume.cancelScheduledValues(Tone.now())
+    this.volume.volume.value = -6
+  }
+
   /**
    * Get the master Volume node, for connecting external audio chains
    * (e.g., the AmbientManager).

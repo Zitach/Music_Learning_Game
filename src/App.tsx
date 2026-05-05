@@ -88,12 +88,14 @@ export default function App() {
       dispatch({ type: 'showMapMessage', message: '该章节尚未解锁，请先完成前面的课程。' })
       return
     }
+    audioEngine.fadeOutAll(0.3)
     audioEngine.playUiConfirm()
     showTransition('进入章节', 'banner')
     dispatch({ type: 'chapterSelected', chapterId })
   }, [isChapterUnlocked, showTransition])
 
   const handleBackToMap = useCallback(() => {
+    audioEngine.fadeOutAll(0.3)
     audioEngine.playUiConfirm()
     showTransition('返回地图', 'banner')
     dispatch({ type: 'chapterBack' })

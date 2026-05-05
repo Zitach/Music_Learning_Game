@@ -1,4 +1,5 @@
 ﻿import { usePlayerStore, Instrument } from '../../stores/playerStore'
+import { audioEngine } from '../../lib/audio/Engine'
 
 const INSTRUMENTS: { id: Instrument; emoji: string; label: string; description: string }[] = [
   { id: 'piano', emoji: '🎹', label: '钢琴', description: '音高关系更清晰，适合经典乐理学习。' },
@@ -24,7 +25,7 @@ export function InstrumentPicker({ onNext }: { onNext: () => void }) {
           </div>
           <div className="choice-grid">
             {INSTRUMENTS.map(({ id, emoji, label, description }) => (
-              <button key={id} type="button" className={`choice-card${instrument === id ? ' is-selected' : ''}`} onClick={() => setInstrument(id)}>
+              <button key={id} type="button" className={`choice-card${instrument === id ? ' is-selected' : ''}`} onClick={() => { setInstrument(id); audioEngine.playUiConfirm() }}>
                 <div><div className="choice-emoji">{emoji}</div><div className="choice-title">{label}</div><div className="choice-copy">{description}</div></div>
               </button>
             ))}

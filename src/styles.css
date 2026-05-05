@@ -27,6 +27,9 @@
   --error: #EF4444;
   --shadow: 0 4px 24px rgba(107, 78, 230, 0.10);
   --shadow-lg: 0 8px 40px rgba(107, 78, 230, 0.15);
+  --anim-stagger: 120ms;
+  --dur-entrance: 400ms;
+  --dur-bounce: 280ms;
 }
 
 [data-theme="dark"] {
@@ -51,6 +54,9 @@
   --error: #F87171;
   --shadow: 0 4px 24px rgba(0, 0, 0, 0.40);
   --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.50);
+  --anim-stagger: 120ms;
+  --dur-entrance: 400ms;
+  --dur-bounce: 280ms;
 }
 
 * {
@@ -166,6 +172,7 @@ input {
   background: var(--panel);
   backdrop-filter: blur(18px);
   box-shadow: var(--shadow);
+  border: 1px solid color-mix(in srgb, var(--primary) 15%, var(--line));
   transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -178,9 +185,9 @@ input {
   border-radius: 18px;
   color: var(--text);
   border: 1px solid var(--line);
-  background: var(--panel);
+  background: linear-gradient(135deg, var(--panel), color-mix(in srgb, var(--primary) 4%, var(--panel)));
   backdrop-filter: blur(18px);
-  box-shadow: var(--shadow);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--primary) 8%, transparent);
   transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -189,6 +196,9 @@ input {
   font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.08em;
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  padding: 2px 6px;
+  border-radius: 6px;
 }
 
 .xp-track {
@@ -196,21 +206,27 @@ input {
   height: 8px;
   border-radius: 999px;
   overflow: hidden;
-  background: var(--line);
+  background: linear-gradient(90deg, var(--line), color-mix(in srgb, var(--primary) 10%, var(--line)));
 }
 
 .xp-fill {
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, var(--primary), var(--primary-light));
-  box-shadow: 0 0 18px color-mix(in srgb, var(--primary) 35%, transparent);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--primary) 35%, transparent);
 }
 
 .heart {
   font-size: 18px;
   line-height: 1;
-  filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.35));
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--danger) 35%, transparent));
   color: var(--danger);
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.heart:hover {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 14px color-mix(in srgb, var(--danger) 50%, transparent));
 }
 
 .heart.is-empty {
@@ -259,7 +275,7 @@ input {
 }
 
 .combo-chip.is-active {
-  box-shadow: 0 0 24px color-mix(in srgb, var(--primary) 25%, transparent);
+  box-shadow: 0 0 32px color-mix(in srgb, var(--primary) 30%, transparent);
 }
 
 .combo-label {
@@ -279,7 +295,7 @@ input {
 .combo-value.combo-pop {
   animation: comboPop 280ms cubic-bezier(0.34, 1.56, 0.64, 1);
   color: var(--primary);
-  text-shadow: 0 0 14px color-mix(in srgb, var(--primary) 45%, transparent);
+  text-shadow: 0 0 18px color-mix(in srgb, var(--primary) 50%, transparent);
 }
 
 @keyframes comboPop {
@@ -467,11 +483,59 @@ input {
   50% { box-shadow: 0 0 32px rgba(16, 185, 129, 0.7); }
 }
 
+/* ── Phase 3C: Instrument selection keyframes ── */
+
+@keyframes instrumentCardEnter {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes instrumentPulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 40%, transparent); }
+  50% { box-shadow: 0 0 20px 8px color-mix(in srgb, var(--primary) 20%, transparent); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+@keyframes selectBounce {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+@keyframes correctFlash {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+@keyframes resultEnter {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes starPop {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .lesson-card {
   animation: cardEnter 0.35s ease-out both;
 }
 
 .lesson-card.is-correct {
+  animation: correctFlash 300ms ease both;
   transition: border-color 0.25s ease, background 0.25s ease;
 }
 
@@ -479,6 +543,19 @@ input {
   animation: shake 0.4s ease both;
   transition: border-color 0.25s ease, background 0.25s ease;
 }
+
+.result-panel {
+  animation: resultEnter 500ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.result-stars span {
+  display: inline-block;
+  animation: starPop 300ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.result-stars span:nth-child(1) { animation-delay: 0ms; }
+.result-stars span:nth-child(2) { animation-delay: 120ms; }
+.result-stars span:nth-child(3) { animation-delay: 240ms; }
 
 .assessment-option {
   transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
@@ -500,6 +577,11 @@ input {
 
 .xp-fill.is-pulse {
   animation: xpPulse 0.6s ease-in-out;
+}
+
+.primary-button:active,
+.secondary-button:active {
+  transform: scale(0.97);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -71,6 +71,7 @@
 .chapter-intro {
   display: grid;
   align-content: space-between;
+  background: linear-gradient(160deg, var(--panel), color-mix(in srgb, var(--primary) 4%, var(--panel)));
 }
 
 .chapter-intro h2 {
@@ -94,6 +95,7 @@
 .chapter-meter-fill {
   height: 100%;
   border-radius: inherit;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
   box-shadow: 0 0 20px color-mix(in srgb, var(--primary) 12%, transparent);
 }
 
@@ -112,6 +114,7 @@
   bottom: 40px;
   width: 2px;
   opacity: 0.65;
+  background: linear-gradient(to bottom, var(--primary), color-mix(in srgb, var(--primary) 20%, transparent));
 }
 
 .chapter-node {
@@ -129,6 +132,15 @@
   text-align: left;
   cursor: pointer;
   opacity: 0.64;
+  transition: opacity 0.2s ease;
+}
+
+.chapter-node:hover .chapter-node-dot {
+  box-shadow: var(--shadow), 0 0 16px color-mix(in srgb, var(--chapter-accent, var(--primary)) 30%, transparent);
+}
+
+.chapter-node.is-unlocked:hover .chapter-node-dot {
+  animation: unlockPulse 1.5s ease-in-out infinite;
 }
 
 .chapter-node.is-unlocked {
@@ -156,8 +168,8 @@
 }
 
 .chapter-node.is-complete .chapter-node-dot {
-  background: color-mix(in srgb, var(--chapter-accent, var(--primary)) 20%, var(--panel));
-  box-shadow: var(--shadow), 0 0 0 1px color-mix(in srgb, var(--chapter-accent, var(--primary)) 26%, transparent) inset;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--chapter-accent, var(--primary)) 30%, var(--panel)), color-mix(in srgb, var(--chapter-accent, var(--primary)) 15%, var(--panel)));
+  box-shadow: var(--shadow), 0 0 0 1px color-mix(in srgb, var(--chapter-accent, var(--primary)) 26%, transparent) inset, 0 0 16px color-mix(in srgb, var(--chapter-accent, var(--primary)) 25%, transparent);
 }
 
 .chapter-node-copy {

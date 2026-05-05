@@ -49,6 +49,7 @@ vi.mock('../../../lib/audio/Engine', () => ({
     playAnswerWrong: vi.fn(),
     playLowLives: vi.fn(),
     playChapterComplete: vi.fn(),
+    fadeOutAll: vi.fn(),
   },
 }))
 

@@ -98,6 +98,9 @@ export function AssessView({ skill, onComplete }: AssessViewProps) {
         effects.triggerParticles('skillComplete')
       }
     }
+    return () => {
+      audioEngine.fadeOutAll(0.25)
+    }
   }, [result, effects])
 
   if (questions.length === 0) {
