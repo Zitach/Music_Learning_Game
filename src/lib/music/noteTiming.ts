@@ -30,7 +30,7 @@ export function getDurationWidth(duration: NoteDuration, baseWidth: number): num
     case 'quarter':
       return baseWidth * 1
     case 'eighth':
-      return baseWidth * 0.75
+      return baseWidth * 0.5
   }
 }
 

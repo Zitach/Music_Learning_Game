@@ -65,12 +65,23 @@ export function SkillPanel({ chapterId, onBack }: SkillPanelProps) {
     setStepIndex(0)
   }
 
+  const handleBackToList = () => {
+    setPhase('list')
+    setCurrentSkillId(null)
+    setStepIndex(0)
+  }
+
   if (phase === 'step' && currentSkillId) {
     const skill = chapter.skills.find(item => item.id === currentSkillId)!
     const step = skill.flow[stepIndex]
-    if (step.type === 'learn') return <LearnView skill={skill} onComplete={handleStepComplete} />
-    if (step.type === 'practice') return renderPracticeVariant(skill)
-    return <AssessView skill={skill} onComplete={handleStepComplete} />
+    return (
+      <div className="chapter-page fade-up">
+        <button className="secondary-button chapter-back-button" onClick={handleBackToList}>← 返回技能列表</button>
+        {step.type === 'learn' && <LearnView skill={skill} onComplete={handleStepComplete} />}
+        {step.type === 'practice' && renderPracticeVariant(skill)}
+        {step.type !== 'learn' && step.type !== 'practice' && <AssessView skill={skill} onComplete={handleStepComplete} />}
+      </div>
+    )
   }
 
   const completedSkills = getCompletedSkills(chapter, skillProgress)

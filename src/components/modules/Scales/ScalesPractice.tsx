@@ -164,6 +164,7 @@ export function ScalesPractice({ onComplete }: ScalesPracticeProps) {
 }
 
 function calculateNoteY(note: string, staffY: number, lineSpacing: number): number {
+  const hasSharp = note.includes('#')
   const noteName = note.replace('#', '')
   const octave = note.includes('5') ? 5 : 4
   const positions: Record<string, number> = {
@@ -171,5 +172,6 @@ function calculateNoteY(note: string, staffY: number, lineSpacing: number): numb
   }
   const baseY = staffY + 4 * lineSpacing // E4 line
   const steps = (4 - octave) * 7 + (positions[noteName] - 5)
-  return baseY - steps * (lineSpacing / 2)
+  const sharpOffset = hasSharp ? -0.5 : 0  // sharp = one position higher = up
+  return baseY - (steps + sharpOffset) * (lineSpacing / 2)
 }

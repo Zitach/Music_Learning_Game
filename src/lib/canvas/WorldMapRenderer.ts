@@ -81,10 +81,29 @@ export class WorldMapRenderer {
 
     const fromDone = this.completedChapters.has(fromId)
 
+    const dx = x2 - x1
+    const dy = y2 - y1
+    const dist = Math.sqrt(dx * dx + dy * dy)
+    const angle = Math.atan2(dy, dx)
+
+    const startX = x1 + Math.cos(angle) * NODE_RADIUS
+    const startY = y1 + Math.sin(angle) * NODE_RADIUS
+    const endX = x2 - Math.cos(angle) * NODE_RADIUS
+    const endY = y2 - Math.sin(angle) * NODE_RADIUS
+
+    const cpOffset = dist * 0.4
+    const perpX = -Math.sin(angle) * cpOffset
+    const perpY = Math.cos(angle) * cpOffset
+
+    const cp1x = startX + Math.cos(angle) * cpOffset + perpX
+    const cp1y = startY + Math.sin(angle) * cpOffset + perpY
+    const cp2x = endX - Math.cos(angle) * cpOffset + perpX
+    const cp2y = endY - Math.sin(angle) * cpOffset + perpY
+
     ctx.save()
     ctx.beginPath()
-    ctx.moveTo(x1, y1 + NODE_RADIUS)
-    ctx.lineTo(x2, y2 - NODE_RADIUS)
+    ctx.moveTo(startX, startY)
+    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY)
     ctx.lineWidth = fromDone ? 3 : 2
     ctx.lineCap = 'round'
 

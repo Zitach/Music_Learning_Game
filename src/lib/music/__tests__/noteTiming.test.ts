@@ -25,13 +25,13 @@ describe('getDurationWidth', () => {
     expect(getDurationWidth('whole', 100)).toBe(400)
     expect(getDurationWidth('half', 100)).toBe(200)
     expect(getDurationWidth('quarter', 100)).toBe(100)
-    expect(getDurationWidth('eighth', 100)).toBe(75)
+    expect(getDurationWidth('eighth', 100)).toBe(50)
   })
 
   it('works with different baseWidth values', () => {
     expect(getDurationWidth('quarter', 50)).toBe(50)
     expect(getDurationWidth('half', 60)).toBe(120)
-    expect(getDurationWidth('eighth', 80)).toBe(60)
+    expect(getDurationWidth('eighth', 80)).toBe(40)
   })
 })
 

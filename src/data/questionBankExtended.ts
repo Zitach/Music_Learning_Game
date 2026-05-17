@@ -134,13 +134,15 @@ export const EXTENDED_QUESTION_BANK: QuestionItem[] = [
   { skillId: 'ch6-s3', mode: 'assessment', type: 'choice', prompt: '和弦标记学习中，最关键的是理解什么？', options: ['符号和和弦类型的对应', '按钮颜色', '页面滚动速度'], answer: '符号和和弦类型的对应', answerMode: 'exact', concept: 'chord_symbol', difficulty: 'basic' },
   { skillId: 'ch6-s3', mode: 'assessment', type: 'choice', prompt: 'G7 与 C、Am 这类标记相比，最明显多了什么信息？', options: ['七和弦提示', '拍号信息', '谱号信息'], answer: '七和弦提示', answerMode: 'exact', concept: 'chord_symbol', difficulty: 'basic' },
 
-  { skillId: 'boss-final', mode: 'practice', type: 'choice', prompt: '终章综合试炼最重要的策略是什么？', options: ['稳定判断，逐题作答', '随便快速乱选', '只记住一个概念'], answer: '稳定判断，逐题作答', answerMode: 'exact', concept: 'final_mixed_review', difficulty: 'intro' },
-  { skillId: 'boss-final', mode: 'practice', type: 'choice', prompt: '终章综合试炼会不会只考一个章节？', options: ['不会，会综合前面内容', '会，只考第一章'], answer: '不会，会综合前面内容', answerMode: 'exact', concept: 'final_mixed_review', difficulty: 'intro' },
-  { skillId: 'boss-final', mode: 'practice', type: 'choice', prompt: '综合试炼中，面对陌生题感时更好的做法是什么？', options: ['回到基础概念判断', '随便点一个', '直接退出'], answer: '回到基础概念判断', answerMode: 'exact', concept: 'final_mixed_review', difficulty: 'basic' },
-  { skillId: 'boss-final', mode: 'practice', type: 'choice', prompt: '综合题最常考查什么？', options: ['前面学过的核心概念组合', '游戏背景颜色', '按钮动画速度'], answer: '前面学过的核心概念组合', answerMode: 'exact', concept: 'final_mixed_review', difficulty: 'basic' },
-  { skillId: 'boss-final', mode: 'practice', type: 'choice', prompt: '在终章中保持冷静有什么好处？', options: ['更容易稳定答题', '能改变正确答案', '能自动跳过题目'], answer: '更容易稳定答题', answerMode: 'exact', concept: 'final_mixed_review', difficulty: 'basic' },
-  { skillId: 'boss-final', mode: 'assessment', type: 'choice', prompt: '下面哪一项最符合终章的特点？', options: ['综合前面多个知识点', '只考一个音名', '只考界面操作'], answer: '综合前面多个知识点', answerMode: 'exact', concept: 'final_mixed_review', difficulty: 'intermediate' },
-  { skillId: 'boss-final', mode: 'assessment', type: 'choice', prompt: '终章里如果遇到和弦与音程混合题，最好的应对方式是什么？', options: ['拆回基础概念逐步判断', '只看题目长度', '随机作答'], answer: '拆回基础概念逐步判断', answerMode: 'exact', concept: 'final_mixed_review', difficulty: 'intermediate' },
-  { skillId: 'boss-final', mode: 'assessment', type: 'choice', prompt: '终章综合考核的目标是什么？', options: ['检验整体掌握情况', '改变章节颜色', '替换乐器图标'], answer: '检验整体掌握情况', answerMode: 'exact', concept: 'final_mixed_review', difficulty: 'intermediate' },
+  { skillId: 'boss-final', mode: 'practice', type: 'choice', prompt: 'C 大调音阶中，E 到 F 是全音还是半音？', options: ['半音', '全音'], answer: '半音', answerMode: 'exact', concept: 'final_mixed_review', difficulty: 'basic' },
+  { skillId: 'boss-final', mode: 'practice', type: 'choice', prompt: '四分音符通常持续几拍？', options: ['1 拍', '2 拍', '4 拍'], answer: '1 拍', answerMode: 'exact', concept: 'final_mixed_review', difficulty: 'basic' },
+  { skillId: 'boss-final', mode: 'practice', type: 'choice', prompt: '简谱中的数字 5 对应哪个唱名？', options: ['sol', 'mi', 'la'], answer: 'sol', answerMode: 'exact', concept: 'final_mixed_review', difficulty: 'basic' },
+  { skillId: 'boss-final', mode: 'practice', type: 'choice', prompt: '高音谱号更常用于哪类音域？', options: ['较高音域', '较低音域'], answer: '较高音域', answerMode: 'exact', concept: 'final_mixed_review', difficulty: 'basic' },
+  { skillId: 'boss-final', mode: 'practice', type: 'choice', prompt: 'G 大调的调号有几个升号？', options: ['1 个', '2 个', '没有'], answer: '1 个', answerMode: 'exact', concept: 'final_mixed_review', difficulty: 'basic' },
+  { skillId: 'boss-final', mode: 'practice', type: 'choice', prompt: '三和弦通常由几个音组成？', options: ['3 个', '4 个', '2 个'], answer: '3 个', answerMode: 'exact', concept: 'final_mixed_review', difficulty: 'basic' },
+  { skillId: 'boss-final', mode: 'assessment', type: 'choice', prompt: '大调音阶的结构公式是什么？', options: ['全全半全全全半', '全半全全半全全', '半全全半全全全'], answer: '全全半全全全半', answerMode: 'exact', concept: 'final_mixed_review', difficulty: 'intermediate' },
+  { skillId: 'boss-final', mode: 'assessment', type: 'choice', prompt: '3/4 拍号表示每小节有几拍？', options: ['3 拍', '4 拍', '2 拍'], answer: '3 拍', answerMode: 'exact', concept: 'final_mixed_review', difficulty: 'intermediate' },
+  { skillId: 'boss-final', mode: 'assessment', type: 'choice', prompt: '纯五度通常属于协和音程还是不协和音程？', options: ['协和', '不协和'], answer: '协和', answerMode: 'exact', concept: 'final_mixed_review', difficulty: 'intermediate' },
+  { skillId: 'boss-final', mode: 'assessment', type: 'choice', prompt: '和弦标记 Am 中的 m 表示什么？', options: ['小三和弦', '大三和弦', '七和弦'], answer: '小三和弦', answerMode: 'exact', concept: 'final_mixed_review', difficulty: 'intermediate' },
 ]
 
