@@ -30,12 +30,12 @@ export function AchievementPanel({ achievements, allAchievements, onClose }: Ach
           zIndex: 100,
           width: 'min(360px, 90vw)',
           maxHeight: 'min(480px, 70vh)',
-          overflowY: 'auto',
           padding: '20px',
           borderRadius: '20px',
           display: 'flex',
           flexDirection: 'column',
           gap: '12px',
+          overflow: 'hidden',
         }}
         role="dialog"
         aria-label="成就面板"
@@ -45,7 +45,7 @@ export function AchievementPanel({ achievements, allAchievements, onClose }: Ach
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginBottom: '4px',
+            flexShrink: 0,
           }}
         >
           <span
@@ -68,70 +68,81 @@ export function AchievementPanel({ achievements, allAchievements, onClose }: Ach
           </span>
         </div>
 
-        {allAchievements.map((ach) => {
-          const isUnlocked = unlockedSet.has(ach.id)
-          return (
-            <div
-              key={ach.id}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '10px 12px',
-                borderRadius: '12px',
-                background: isUnlocked ? 'var(--bg-1)' : 'transparent',
-                opacity: isUnlocked ? 1 : 0.4,
-                filter: isUnlocked ? 'none' : 'grayscale(1)',
-                transition: 'opacity 0.2s ease',
-              }}
-            >
-              <span style={{ fontSize: '22px', lineHeight: 1 }}>{ach.icon}</span>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div
-                  style={{
-                    fontSize: '14px',
-                    fontWeight: 600,
-                    color: 'var(--text)',
-                    lineHeight: 1.3,
-                  }}
-                >
-                  {ach.title}
+        <div
+          style={{
+            overflowY: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            flex: '1 1 0',
+            minHeight: 0,
+          }}
+        >
+          {allAchievements.map((ach) => {
+            const isUnlocked = unlockedSet.has(ach.id)
+            return (
+              <div
+                key={ach.id}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '10px 12px',
+                  borderRadius: '12px',
+                  background: isUnlocked ? 'var(--bg-1)' : 'transparent',
+                  opacity: isUnlocked ? 1 : 0.4,
+                  filter: isUnlocked ? 'none' : 'grayscale(1)',
+                  transition: 'opacity 0.2s ease',
+                }}
+              >
+                <span style={{ fontSize: '22px', lineHeight: 1 }}>{ach.icon}</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      color: 'var(--text)',
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {ach.title}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: 'var(--muted)',
+                      lineHeight: 1.4,
+                      marginTop: '2px',
+                    }}
+                  >
+                    {ach.description}
+                  </div>
                 </div>
-                <div
-                  style={{
-                    fontSize: '12px',
-                    color: 'var(--muted)',
-                    lineHeight: 1.4,
-                    marginTop: '2px',
-                  }}
-                >
-                  {ach.description}
-                </div>
-              </div>
-              {isUnlocked ? (
-                <span
-                  style={{
-                    fontSize: '16px',
-                    color: 'var(--success)',
-                    flexShrink: 0,
-                  }}
-                >
-                  ✓
-                </span>
-              ) : (
-                <span
-                  style={{
-                    fontSize: '16px',
-                    color: 'var(--muted)',
-                    flexShrink: 0,
-                  }}
-                >
-                  🔒
+                {isUnlocked ? (
+                  <span
+                    style={{
+                      fontSize: '16px',
+                      color: 'var(--success)',
+                      flexShrink: 0,
+                    }}
+                  >
+                    ✓
                   </span>
-              )}
-            </div>
-          )
-        })}
+                ) : (
+                  <span
+                    style={{
+                      fontSize: '16px',
+                      color: 'var(--muted)',
+                      flexShrink: 0,
+                    }}
+                  >
+                    🔒
+                    </span>
+                )}
+              </div>
+            )
+          })}
+        </div>
       </div>
     </>
   )
