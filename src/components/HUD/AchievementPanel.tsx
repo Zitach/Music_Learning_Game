@@ -23,9 +23,9 @@ export function AchievementPanel({ achievements, allAchievements, onClose }: Ach
       <div
         className="floating-panel fade-up"
         style={{
-          position: 'absolute',
-          top: 'calc(100% + 8px)',
-          right: 0,
+          position: 'fixed',
+          top: '68px',
+          left: '14px',
           zIndex: 100,
           width: 'min(360px, 90vw)',
           maxHeight: 'min(480px, 70vh)',

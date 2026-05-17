@@ -9,7 +9,7 @@ export function BadgeCounter() {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div>
       <div
         className="hud-chip"
         onClick={() => setIsOpen(prev => !prev)}
