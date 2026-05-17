@@ -30,12 +30,9 @@ export function AchievementPanel({ achievements, allAchievements, onClose }: Ach
           zIndex: 100,
           width: 'min(360px, 90vw)',
           maxHeight: 'min(480px, 70vh)',
+          overflowY: 'auto',
           padding: '20px',
           borderRadius: '20px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px',
-          overflow: 'hidden',
         }}
         role="dialog"
         aria-label="成就面板"
@@ -43,41 +40,37 @@ export function AchievementPanel({ achievements, allAchievements, onClose }: Ach
         <div
           style={{
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexShrink: 0,
-          }}
-        >
-          <span
-            style={{
-              fontSize: '15px',
-              fontWeight: 700,
-              color: 'var(--text)',
-            }}
-          >
-            成就
-          </span>
-          <span
-            style={{
-              fontSize: '13px',
-              fontWeight: 600,
-              color: 'var(--gold)',
-            }}
-          >
-            已解锁 {achievements.length} / {allAchievements.length}
-          </span>
-        </div>
-
-        <div
-          style={{
-            overflowY: 'auto',
-            display: 'flex',
             flexDirection: 'column',
             gap: '12px',
-            flex: '1 1 0',
-            minHeight: 0,
           }}
         >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <span
+              style={{
+                fontSize: '15px',
+                fontWeight: 700,
+                color: 'var(--text)',
+              }}
+            >
+              成就
+            </span>
+            <span
+              style={{
+                fontSize: '13px',
+                fontWeight: 600,
+                color: 'var(--gold)',
+              }}
+            >
+              已解锁 {achievements.length} / {allAchievements.length}
+            </span>
+          </div>
+
           {allAchievements.map((ach) => {
             const isUnlocked = unlockedSet.has(ach.id)
             return (
