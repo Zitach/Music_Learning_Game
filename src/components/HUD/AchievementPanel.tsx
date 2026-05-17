@@ -22,6 +22,7 @@ export function AchievementPanel({ achievements, allAchievements, onClose }: Ach
       />
       <div
         className="floating-panel fade-up"
+        onWheel={(e) => e.stopPropagation()}
         style={{
           position: 'fixed',
           top: '68px',
